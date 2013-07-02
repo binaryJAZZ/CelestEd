@@ -216,6 +216,7 @@ class Room{
   String neighborsToString(){
     String neighbors = "//room" + ID + "'s neighbors " + "\n";
     for (Room r : neighborList){
+      neighbors += "\t\t\t";
       neighbors += "room" + ID + ".addNeighbor(room" + r.ID + "); " + "\n";
     }
     return neighbors;

@@ -384,25 +384,107 @@ void saveMap(File fileOut){
   try{
     PrintWriter output = createWriter(fileOut.getName()); //open file
     
-    //write level data
-    output.print("//tile map arrays");
-    output.print("\n");
+    //WRITE LEVEL DATA
+    String className = fileOut.getName().replace(".as","");
+    int tileSize = tilesheets.get(floors.tileList.get(0).tilesheetIndex).tileSize;
+    int levelWidth = rightEdge-leftEdge+1;
+    int levelHeight = bottomEdge-topEdge+1;
+    
+    //the header of the flash source file
+    output.print("/**\n * Initialization code: new "+className+"(new FlxPoint("+(levelWidth*tileSize*2)+", "+(levelHeight*tileSize*2)+"),new FlxPoint("+tileSize+", "+tileSize+"));\n * tilesize: "+tileSize+"\n */\n");
+    //^the '*2' in the map size is just for safety
+    output.print("package\n{\n\timport org.flixel.*;\n\tpublic class "+className+" extends TopDownLevel\n\t{\n");
+    
+    //the arrays for the tile maps
     output.print(floors.stringExport(leftEdge, topEdge, rightEdge+1, bottomEdge+1));
     output.print("\n");
     output.print(walls.stringExport(leftEdge, topEdge, rightEdge+1, bottomEdge+1));
-    
     output.print("\n");
-    output.print("//room data");
+    
+    //initialize variables
+    output.print("\t\tprotected var decalGroup:FlxGroup;\n");
+    output.print("\t\tprotected var objectGroup:FlxGroup;\n\n");
+    
+    output.print("\t\tprivate var darkness:FlxSprite;\n");
+    output.print("\t\tprivate var playerLight:Light;\n\n");
+    
+    //the constructor
+    output.print("\t\tpublic function "+className+"(levelSize:FlxPoint, blockSize:FlxPoint):void {\n");
+    output.print("\t\t\tsuper(levelSize, blockSize, new FlxPoint(/*start x pos*/,/*start y pos*/));\n");
+    output.print("\t\t}\n\n");
+    
+    //function for creating the map based on the arrays
+    output.print("\t\toverride protected function createMap():void {\n\t\t\tvar tiles:FlxTilemap;\n\n");
+    
+    output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n");
+    output.print("\t\t\t\tFlxTilemap.arrayToCSV(FLOORS, "+levelWidth+"),\n");
+    output.print("\t\t\t\tAssets.FLOORS_TILE, tileSize.x, tileSize.y, 0, 0, 0, uint.MAX_VALUE\n\t\t\t);\n");
+    output.print("\t\t\tfloorGroup.add(tiles);\n\n");
+    
+    output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n");
+    output.print("\t\t\t\tFlxTilemap.arrayToCSV(WALLS, "+levelWidth+"),\n");
+    output.print("\t\t\t\tAssets.WALLS_TILE, tileSize.x, tileSize.y\n\t\t\t);\n");
+    output.print("\t\t\twallGroup.add(tiles);\n\n");
+    
+    output.print("\t\t\tdarkness = new FlxSprite(0,0);\n\t\t\tdarkness.makeGraphic(FlxG.width, FlxG.height, 0xff000000);\n");
+    output.print("\t\t\tdarkness.scrollFactor.x = darkness.scrollFactor.y = 0;\n\t\t\tdarkness.blend = \"multiply\";\n");
+    output.print("\t\t\tplayerLight = new Light(Assets.LightImageClass, FlxG.width / 2, FlxG.height / 2, darkness);\n");
+    
+    //room data
+    output.print("\n");
+    output.print("\t\t\t//room data");
     output.print("\n");
     for (Room r : roomList){
+      output.print("\t\t\t");
       output.print(r.toString(16));
       output.print("\n");
     }
     output.print("\n");
     for (Room r : roomList){
+      output.print("\t\t\t");
       output.print(r.neighborsToString());
       output.print("\n");
     }
+    
+    output.print("\t\t\tcurrRoom = room"+roomList.get(0).ID+"; //replace with room of your choice\n\n");
+    
+    output.print("\t\t\tcreateObjects();\n\t\t}\n\n");
+    
+    //function for creating objects
+    output.print("\t\tprotected function createObjects():void {\n\t\t\tvar sprite:FlxSprite;\n\t\t\tdecalGroup = new FlxGroup();\n\t\t\tobjectGroup = new FlxGroup();\n\t\t}\n\n");
+    
+    //function for initializing the player
+    output.print("\t\toverride protected function createPlayer():void {\n\t\t\tplayer = new Player(playerStart.x, playerStart.y);\n\t\t}\n\n");
+    
+    //function for creating the GUI
+    output.print("\t\toverride protected function createGUI():void {\n\t\t}\n\n");
+    
+    //function for adding all the object groups - order determines how things are draw
+    output.print("\t\toverride protected function addGroups(): void {\n");
+    output.print("\t\t\tadd(floorGroup);\n");
+    output.print("\t\t\tadd(wallGroup);\n");
+    output.print("\t\t\tadd(decalGroup);\n");
+    output.print("\t\t\tadd(objectGroup);\n");
+    output.print("\t\t\tadd(player);\n");
+    output.print("\t\t\tadd(player.mySprite);\n");
+    output.print("\t\t\tadd(playerLight);\n");
+    output.print("\t\t\tadd(darkness);\n");
+    output.print("\t\t\tadd(guiGroup);\n");
+    output.print("\t\t}\n\n");
+    
+    //drawing function
+    output.print("\t\toverride public function draw():void {\n\t\t\tdarkness.fill(0xff000000);\n\t\t\tsuper.draw();\n\t\t}\n\n");
+    
+    //transfer level function
+    output.print("\t\toverride public function transferLevel(): TopDownLevel{\n\t\t\treturn null;\n\t\t}\n\n");
+    
+    //update function
+    output.print("\t\toverride public function update():void {\n\t\t\tsuper.update();\n");
+    output.print("\t\t\tplayerLight.x = (player.x+player.width/2);\n\t\t\tplayerLight.y = (player.y-player.height/2);\n");
+    output.print("\t\t\tFlxG.collide(objectGroup, player);\n\t\t}\n");
+    
+    //end of flash source file
+    output.print("\t}\n}");
     
     output.flush(); //write remaing data
     output.close(); //finish the file
@@ -414,8 +496,7 @@ void saveMap(File fileOut){
 
 void loadMap(File fileIn){
   try{
-    int tileSize = 16;
-    
+    int tileSize = 16; //default is 16
     String layerName = "";
     String tilesheetName = "";
     String arrayStr = "";
@@ -425,10 +506,15 @@ void loadMap(File fileIn){
     //String mapFileStr = "";
     for (String curLine : loadStrings(fileIn.getAbsolutePath())){
       //println(curLine);
-      String[] curWords = curLine.split(" "); //split on whitespace
+      String[] curWords = curLine.replace("\t","").split(" "); //split on whitespace
       
       //println(curWords.length);
       //println(curWords[0]);
+      
+      if (curWords.length > 3 && curWords[2].equals("tilesize:")){
+        tileSize = Integer.parseInt(curWords[3]);
+        //println(tileSize);
+      }
       
       if (curWords.length > 9 && curWords[4].equals("Room(new")){
         String[] leftCornerStr = splitTokens(curWords[5], "()")[1].split(",");
@@ -507,6 +593,9 @@ void loadMap(File fileIn){
     println("can't load the map... dang");
   }
   
+  for (Room r : roomList){
+    r.findNeighbors(roomList);
+  }
   recalculateLevelBounds();
 }
 

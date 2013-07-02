@@ -83,35 +83,40 @@ class TileMap{
   
   String stringExport(int startX, int startY, int endX, int endY){ //return this tile map in text form (to be outputted in a level file)
     String newLine = "\n";
+    String baseIndent = "\t\t";
     
-    String s = "/** " + newLine;
-    s += " * " + name + " layer " + newLine;
-    s += " * tilesheet: " + drawer.getSheetName(tileList.get(0)) + " " + newLine;
-    s += " */ " + newLine;
-    s += "protected static var " + name + ":Array = new Array( " + newLine;
+    String s = baseIndent + "/** " + newLine;
+    s += baseIndent + " * " + name + " layer " + newLine;
+    s += baseIndent + " * tilesheet: " + drawer.getSheetName(tileList.get(0)) + " " + newLine;
+    s += baseIndent + " */ " + newLine;
+    s += baseIndent + "protected static var " + name + ":Array = new Array( " + newLine;
     
     //all the stuff in the array goes here
     for (int y = startY; y < endY; y++){
-      s += "\t";
+      s += baseIndent + "\t";
       
       Integer keyY = new Integer(y);
       
       for (int x = startX; x < endX; x++){
         Integer keyX = new Integer(x);
         Tile t = getTile(x,y);
+        String seperator = ", ";
+        if (x == endX-1 && y == endY-1){
+          seperator = "";
+        }
         
         if (t != null){ //get the number associated with this tile
-          s += t.toString() + ", ";
+          s += t.toString() + seperator;
         }
         else{ //default option
-          s += "0, ";
+          s += "0" + seperator;
         }
       }
       
       s += newLine;
     }
     
-    s += "); " + newLine;
+    s += baseIndent + "); " + newLine;
     
     return s;
   }
