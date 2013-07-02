@@ -1,0 +1,59 @@
+//tile map arrays
+/** 
+ * FLOORS layer 
+ * tilesheet: floor_wood_opengameart 
+ */ 
+protected static var FLOORS:Array = new Array( 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+); 
+
+/** 
+ * WALLS layer 
+ * tilesheet: walls_opengameart 
+ */ 
+protected static var WALLS:Array = new Array( 
+	0, 0, 0, 0, 0, 0, 5, 5, 5, 5, 5, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 
+	0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 
+	1, 2, 2, 2, 3, 0, 6, 0, 0, 0, 8, 0, 0, 0, 
+	6, 0, 0, 0, 8, 2, 2, 2, 0, 2, 2, 0, 0, 0, 
+	6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 5, 3, 
+	6, 0, 0, 0, 8, 2, 2, 2, 2, 3, 0, 0, 0, 8, 
+	5, 5, 5, 5, 5, 0, 0, 0, 0, 8, 0, 0, 0, 8, 
+	0, 0, 0, 0, 0, 0, 1, 7, 0, 8, 0, 0, 0, 8, 
+	0, 0, 0, 0, 0, 0, 6, 0, 0, 8, 0, 0, 0, 8, 
+	0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 
+); 
+
+//room data
+var room0:Room = new Room(new FlxPoint(-22,56), new FlxPoint(91,92), new FlxPoint(23,102));
+var room1:Room = new Room(new FlxPoint(52,72), new FlxPoint(112,59), new FlxPoint(108,102));
+var room2:Room = new Room(new FlxPoint(75,-7), new FlxPoint(84,90), new FlxPoint(117,38));
+var room3:Room = new Room(new FlxPoint(136,104), new FlxPoint(75,82), new FlxPoint(174,145));
+
+//room0's neighbors
+room0.addNeighbor(room1); 
+
+//room1's neighbors
+room1.addNeighbor(room0); 
+room1.addNeighbor(room2); 
+room1.addNeighbor(room3); 
+
+//room2's neighbors
+room2.addNeighbor(room1); 
+
+//room3's neighbors
+room3.addNeighbor(room1); 
+

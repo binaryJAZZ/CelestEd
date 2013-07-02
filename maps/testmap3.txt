@@ -1,0 +1,27 @@
+/** 
+ * FLOORS layer 
+ * tilesheet: Belal_Smooth_Walls 
+ */ 
+protected static var FLOORS:Array = new Array( 
+	5, 5, 5, 5, 5, 5, 5, 
+	-, 5, -, -, -, -, -, 
+	-, -, 5, -, -, -, -, 
+	-, -, -, 5, -, -, -, 
+	-, -, -, -, 5, -, -, 
+	-, -, -, -, -, 5, -, 
+	5, 5, 5, 5, 5, 5, 5, 
+); 
+
+/** 
+ * WALLS layer 
+ * tilesheet: tiles_femok 
+ */ 
+protected static var WALLS:Array = new Array( 
+	52, -, -, -, -, -, 52, 
+	52, -, -, -, -, -, 52, 
+	52, -, -, -, -, -, 52, 
+	52, -, -, -, -, -, 52, 
+	52, -, -, -, -, -, 52, 
+	52, -, -, -, -, -, 52, 
+	52, -, -, -, -, -, 52, 
+); 
