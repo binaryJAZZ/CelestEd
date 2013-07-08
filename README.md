@@ -116,7 +116,34 @@ From File" button, located under the "Export" button. Then navigate to the file 
 is still correct, it should load your level automatically.
 
 ### Rooms ###
+To switch to the ROOMS tool, press the "Switch tools" button until you arrive at "Switch tools (ROOMS)." Your cursor
+should now look like a white circle.
 
+#### Creating Rooms ####
+To make a new room click anywhere on the screen where there is no button or pre-existing room in the way. Wherever
+you click will make one corner of the room. Drag your mouse to expand the room and set the position of the opposite
+corner. You should see a gold rectangle with gold circles at each corner. Let go of your mouse to finish creating the
+room. 
+
+#### Editing Rooms ####
+When you move your mouse away from the room, the rectangle should turn black and the circles will dissapear -
+this means you are not hovering over that room. When you have multiple rooms, they will all appear as black rectangles.
+If you move our mouse back over a room, it will turn gold again and the circles will reappear. These are handles: click
+and drag any of the gold circles to change the position of that corner of the room.
+
+#### Neighbors ####
+When you hover over a room, some other rooms may turn from black to white. Those rooms are the neighbors of the room
+you are hovering over. Any room that overlaps with another room will automatically become its neighbor.
+
+#### Moving the Camera ####
+When you hover over a room, you will notice a gold circle with a smaller circle inside of it that appears in the center
+of the rectangle. This circle represents the position the camera will move to when the player enters that room. Click
+and drag it to move it. If you resize your room, the camera position will adjust to relative to the size and position
+of the room.
+
+#### Deleting Rooms ####
+To delete a room, grab one of its corners and pull it over to its opposite corner. When a room is squeezed so that 
+all of its corners are touching, the room will turn red. If you let go of your mouse then, the room will be deleted.
 
 ### Player ###
 
