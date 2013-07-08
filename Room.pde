@@ -122,6 +122,14 @@ class Room{
     return getScreenY() + getScreenHeight()*camY;
   }
   
+  int getCamX(){
+    return int(x + (camX * width));
+  }
+  
+  int getCamY(){
+    return int(y + (camY * height));
+  }
+  
   boolean mouseCollision(){
     return (mouseX > getScreenX() && mouseX < getScreenX() + getScreenWidth() &&
               mouseY > getScreenY() && mouseY < getScreenY() + getScreenHeight());
@@ -207,10 +215,10 @@ class Room{
     }
   }
   
-  String toString(int tileSize){
-    return "var room" + ID + ":Room = new Room(new FlxPoint(" + int(x*tileSize) + "," + int(y*tileSize) + 
+  String toString(int tileSize, int tileShiftX, int tileShiftY){
+    return "var room" + ID + ":Room = new Room(new FlxPoint(" + int(tileShiftX*tileSize + x*tileSize) + "," + int(tileShiftY*tileSize + y*tileSize) + 
               "), new FlxPoint(" + int(width*tileSize) + "," + int(height*tileSize) + 
-              "), new FlxPoint(" + int(x*tileSize + camX*width*tileSize) + "," + int(y*tileSize + camY*height*tileSize) + "));";
+              "), new FlxPoint(" + int(tileShiftX*tileSize + x*tileSize + camX*width*tileSize) + "," + int(tileShiftY*tileSize + y*tileSize + camY*height*tileSize) + "));";
   }
   
   String neighborsToString(){
