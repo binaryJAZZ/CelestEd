@@ -1,7 +1,8 @@
 CelestEd
 ========
 
-A level editor for "Dame Celeste." The following is a guide for using the level editor.
+A level editor for "Dame Celeste." The following is a guide for using the level editor. You can read it in order
+as a sort of tutorial, or use the table of contents to skip to a section interest.
 
 Table of Contents 
 -----------------
@@ -96,7 +97,23 @@ button located on the left-hand side of the screen it will reveal the following 
 >to try to match the work mode you are entering. You can always toggle them back by opening the option menu, however.
 
 ### Saving ###
+#### Export To File ####
+When you are done working on a level and want to use it the game, or you just want to save your progress, you can
+save the current level as an ActionScript file by pressing the "Export To File" button. This will give you a dialog
+box prompting you to select a location and name for your file. Any name will do, but the most appropriate format
+is "MapName.as" since the file being exported is a full-fledged ActionScript file which can be added directly to the
+project.
 
+>NOTE: Whatever name you put before the ".as" in the filename (in this example "MapName") will become the class name
+>of your new map, which inherits from TopDownLevel.
+
+>BUG NOTE: As of now, you can't save a map that doesn't have a tile from *ALL THREE* layers (FLOOR, FOREGROUND, WALL).
+>Also, it is not advisable to create a map that has NO rooms, though it won't crash the program.
+
+#### Import From File ####
+Now that you've saved a file, you may want to re-open it at a later date in order to edit it. To do that, press the "Import
+From File" button, located under the "Export" button. Then navigate to the file you want to open, and, if the file format
+is still correct, it should load your level automatically.
 
 ### Rooms ###
 
