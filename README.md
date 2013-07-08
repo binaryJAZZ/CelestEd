@@ -146,9 +146,36 @@ To delete a room, grab one of its corners and pull it over to its opposite corne
 all of its corners are touching, the room will turn red. If you let go of your mouse then, the room will be deleted.
 
 ### Player ###
+To switch to the PLAYER tool, press the "Switch tools" button until it reads "Switch tools (PLAYER)." This tool lets
+you decide where the player's starting position should be. Click on any grid space and the player's starting position
+will move there: you should see a white square and, above it, the word player.
 
+>NOTE: You cannot delete the player. By default, the player will start at grid coordinates (0,0).
 
 ### Enemies ###
+To switch to the ENEMY tool, press the "Switch tools" button until it reads "Switch tools (ENEMY)." This tool lets
+you place and delete enemies, as well as add waypoints for the enemies to follow.
 
+To add an enemy click on any grid square that does not alread contain an enemy. A gold square with the word "Enemy"
+above it should appear. The enemy you currently have selected is always a gold square. Once you add more than one
+enemy, unselected enemies are represented by black squares.
+
+To select an enemy, click on it. It should turn gold.
+
+To delete an enemy, select it, and then click on it again. It should dissapear.
 
 ### Waypoints ###
+When using the ENEMY tool, a button labeled "Switch mode" should appear beneath the "Switch tools" button.
+It starts out as "Switch mode (ENEMY)," which means you're in the enemy placement mode, but press it again
+and it will toggle to "Switch mode (WAYPOINT)," which lets you place waypoints.
+
+Once you're in WAYPOINT mode and you have an enemy selected, you can add new waypoints by clicking into any
+grid square that is currently unoccupied by a waypoint. The new waypoint will be represented by a circle,
+and a line connecting it to other waypoints belonging to the selected enemy, and a number which tells you
+which what order the enemy will visit the waypoints. The waypoint path of a selected enemy will be gold,
+all others will be black.
+
+To delete a waypoint, click on it while using the ENEMY tool, with the desired enemy selected, in WAYPOINT mode.
+
+>NOTE: You currently can't select enemies in WAYPOINT mode. To switch which enemy's waypont path you're editing, you
+>have to go back to ENEMY mode, select the enemy, and then return to WAYPOINT mode.
