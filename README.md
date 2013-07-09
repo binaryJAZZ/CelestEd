@@ -76,6 +76,9 @@ WALL), just keep clicking that button. The current layer is the one whose name i
 To move around the map, use W-A-S-D as though they were the arrow keys, with W == up, S == down, 
 and A & D == left & right. One key press will move you one tile in any direction.
 
+You can also move *much faster* by holding down the SPACE bar and clicking and dragging across the entire screen.
+This is obviously less accurate, but more convenient sometimes.
+
 To change the zoom level, press "-" to zoom out and "+" to zoom in.
 
 ### Options ###
