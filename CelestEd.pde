@@ -10,6 +10,9 @@ import java.util.HashMap;
 //camera
 int camX = 0; //where is camera located? (the center square of the grid)
 int camY = 0;
+int dragScreenX = 0; //what grid square is the user grabbing in order to move the screen?
+int dragScreenY = 0;
+boolean isDraggingScreen = false;
 
 //window size
 final static int WIN_X = 800;
@@ -189,6 +192,12 @@ void draw(){
   if (!hideTileDrawer.isSelected()){
     drawer.render(drawerColor, lineColor);
   }
+  
+  //drag screen around
+  if (isDraggingScreen && mousePressed){
+    camX += dragScreenX - getGridX();
+    camY += dragScreenY - getGridY();
+  }
 }
 
 void keyPressed(){
@@ -199,13 +208,23 @@ void keyPressed(){
   
   if (key == '-' && gridSize > minGridSize) gridSize /= 2;
   if (key == '=' && gridSize < maxGridSize) gridSize *= 2;
+  
+  if (key == ' ') isDraggingScreen = true;
+}
+
+void keyReleased(){
+  if (key == ' ') isDraggingScreen = false;
 }
 
 void mousePressed(){
   boolean buttonPress = userInterface();
   
   if (!buttonPress){
-    if (toolSelector.isSelected(0)){
+    if (isDraggingScreen){
+      dragScreenX = getGridX();
+      dragScreenY = getGridY();
+    }
+    else if (toolSelector.isSelected(0)){
       //make a tile
       editTiles();
     }
@@ -582,7 +601,8 @@ void saveMap(File fileOut){
       output.print("\n");
     }
 
-    output.print("\t\t\tcurrRoom = room"+playerStart.closestRoom(roomList).ID+"; //replace with room of your choice\n\n");
+    output.print("\t\t\tcurrRoom = room"+playerStart.closestRoom(roomList).ID+"; //replace with room of your choice\n");
+    output.print("\t\t\tfocusOnCurrRoom();\n\n");
     
     output.print("\t\t\tcreateObjects();\n\t\t}\n\n");
     
@@ -628,9 +648,14 @@ void saveMap(File fileOut){
     output.print("\t\toverride public function transferLevel(): TopDownLevel{\n\t\t\treturn null;\n\t\t}\n\n");
     
     //update function
-    output.print("\t\toverride public function update():void {\n\t\t\tsuper.update();\n");
+    output.print("\t\toverride public function update():void {\n\t\t\tsuper.update();\n\t\t}\n\n");
+    
+    //normal gameplay function
+    output.print("\t\toverride public function normalGameplay():void {\n\t\t\tsuper.normalGameplay();\n");
     output.print("\t\t\tplayerLight.x = (player.x+player.width/2);\n\t\t\tplayerLight.y = (player.y-player.height/2);\n");
-    output.print("\t\t\tFlxG.collide(objectGroup, player);\n\t\t}\n");
+    output.print("\t\t\tFlxG.collide(objectGroup, player);\n\n");
+    output.print("\t\t\tvar enemyMessage:int = enemyController.commandEnemies();\n");
+    output.print("\t\t}\n");
     
     //end of flash source file
     output.print("\t}\n}");
@@ -783,6 +808,9 @@ void loadMap(File fileIn){
     r.findNeighbors(roomList);
   }
   recalculateLevelBounds();
+  
+  //hax
+  mousePressed = false;
 }
 
 void recalculateLevelBounds(){
