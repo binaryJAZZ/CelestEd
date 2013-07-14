@@ -65,6 +65,12 @@ Player playerStart = new Player(0,0);
 ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
 Enemy selectedEnemy = null;
 
+//Allows for holding 'p' and placing tiles
+boolean placingTiles;
+
+//Allows for holding e to erase tiles
+boolean erasingTiles;
+
 void setup(){
   size(WIN_X, WIN_Y);
   
@@ -152,6 +158,22 @@ void draw(){
     updateRooms();
   }
   
+  //Check placing tiles
+  if(placingTiles)
+  {
+    editTiles();
+  }
+  
+  //Check for deleting tiles
+  if(erasingTiles)
+  {
+    Integer gridX = new Integer(getGridX());
+    Integer gridY = new Integer(getGridY());
+    TileMap tileMap = tileMapList[layerSelector.getIndex()];
+     tileMap.removeTile(gridX, gridY);
+  }
+  
+  
   //cursor
   drawCursor();
   
@@ -209,11 +231,38 @@ void keyPressed(){
   if (key == '-' && gridSize > minGridSize) gridSize /= 2;
   if (key == '=' && gridSize < maxGridSize) gridSize *= 2;
   
+  if(key=='p')
+  {
+    placingTiles=true;
+  }
+  
+  //Delete tiles
+  if(key=='e')
+  {
+    erasingTiles=true;
+  }
+  
   if (key == ' ') isDraggingScreen = true;
 }
 
 void keyReleased(){
   if (key == ' ') isDraggingScreen = false;
+  
+   if(key=='p')
+  {
+    placingTiles=false;
+  }
+  
+  if(key=='e')
+  {
+    erasingTiles=false;
+    
+    //Check what the new map bounds are
+    if (getGridX() == leftEdge || getGridX() == rightEdge || 
+        getGridY() == topEdge || getGridY() == bottomEdge){
+      recalculateLevelBounds();
+    }
+  }
 }
 
 void mousePressed(){
@@ -418,8 +467,8 @@ void editTiles(){
   boolean tileAddSuccessful = tileMap.addTile(gridX, gridY, drawer.currentTilesheetIndex, drawer.currentTileIndex);
                   
   //if you can't add a tile, that means there is already one at that position on that layer
-  //delete the offending tile    
-  if (!tileAddSuccessful){        
+  //delete the offending tile  (UNLESS WE'RE PLACING TILES)
+  if (!tileAddSuccessful && !placingTiles){        
     tileMap.removeTile(gridX, gridY);
     
     if (getGridX() == leftEdge || getGridX() == rightEdge || 
@@ -427,6 +476,7 @@ void editTiles(){
       recalculateLevelBounds();
     }
   }
+ 
 }
 
 void drawGrid(int c){
