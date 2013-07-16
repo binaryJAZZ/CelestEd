@@ -16,6 +16,7 @@ class TileMap{
       HashMap<Integer, Tile> rowMap = tileMap.get(y);
       if (rowMap.containsKey(x)){
         //there is ALREADY a tile here! return false
+       // println("Already a tile there");
         return false;
       }
       else{
@@ -40,6 +41,7 @@ class TileMap{
       //success
       return true;
     } 
+    
   }
   
   boolean removeTile(Integer x, Integer y){ //remove a tile at a location (if successfully removed, returns true)
@@ -141,6 +143,7 @@ class TileMap{
         //println(tileStr);
         
         try{
+          //println("Add title");
           addTile(new Integer(x), new Integer(y), tilesheetIndex, Integer.parseInt(tileStr));
         }
         catch(Exception e){
