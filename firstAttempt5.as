@@ -968,8 +968,10 @@ package
 			
 			//Pause player
 			player.setPaused(true);
-			questionText = new FlxText(160, 400, levelSize.x/2, enemyController.getQuestion());
+			//400 is width, center allignment put's in mid of that
+			questionText = new FlxText(FlxG.camera.scroll.x-200+160, (220)+FlxG.camera.scroll.y, 400, enemyController.getQuestion());
 			questionText.alignment = "center";
+			
 			//Set Question Time State
 			setGameState(QUESTION_TIME);
 				
@@ -977,10 +979,10 @@ package
 			
 			var currAnswers: Vector.<EnemyAnswer> = enemyController.getAnswers();
 			
-			answerUp = new FlxText(70, levelSize.y/3, levelSize.x/2, currAnswers[0].getAnswerText());//Up Answer
-			answerRight = new FlxText(10,levelSize.y/3, levelSize.x/2, currAnswers[1].getAnswerText()); //Right Answer
-			answerLeft = new FlxText(10, levelSize.y/2, levelSize.x/2, currAnswers[3].getAnswerText()); //Left Answer
-			answerDown = new FlxText(10, 2*levelSize.y/3, levelSize.x/2, currAnswers[2].getAnswerText()); //Down Answer
+			answerUp = new FlxText(FlxG.camera.scroll.x-40, FlxG.camera.scroll.y+50, 400, currAnswers[0].getAnswerText());//Up Answer
+			answerRight = new FlxText(FlxG.camera.scroll.x, FlxG.camera.scroll.y+100, 400, currAnswers[1].getAnswerText()); //Right Answer
+			answerLeft = new FlxText(FlxG.camera.scroll.x-80, FlxG.camera.scroll.y+100,400, currAnswers[3].getAnswerText()); //Left Answer
+			answerDown = new FlxText(FlxG.camera.scroll.x-40, FlxG.camera.scroll.y+150, 400, currAnswers[2].getAnswerText()); //Down Answer
 						
 			var i: int;
 			
@@ -999,7 +1001,7 @@ package
 			add(answerRight);
 			answerDown.alignment = "center";
 			add(answerDown);
-			answerLeft.alignment = "left";
+			answerLeft.alignment = "center";
 			add(answerLeft);
 			
 			
