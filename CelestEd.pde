@@ -592,7 +592,9 @@ void saveMap(File fileOut){
     int tileShiftY = -1 * topEdge;
     
     //the header of the flash source file
-    output.print("/**\n * Initialization code: new "+className+"(new FlxPoint("+(levelWidth*tileSize*2)+", "+(levelHeight*tileSize*2)+"),new FlxPoint("+tileSize+", "+tileSize+"));\n * tilesize: "+tileSize+"\n */\n");
+    String initCode = "new " + className + "(new FlxPoint(" + (levelWidth*tileSize*2) + ", " + (levelHeight*tileSize*2) + "),new FlxPoint(" + tileSize + ", " + tileSize + "));";
+    //output.print("/**\n * Initialization code: new "+className+"(new FlxPoint("+(levelWidth*tileSize*2)+", "+(levelHeight*tileSize*2)+"),new FlxPoint("+tileSize+", "+tileSize+"));\n * tilesize: "+tileSize+"\n */\n");
+    output.print("/**\n * Initialization code: " + initCode + "\n * tilesize: "+tileSize+"\n */\n");
     //^the '*2' in the map size is just for safety
     output.print("package\n{\n\timport org.flixel.*;\n\tpublic class "+className+" extends TopDownLevel\n\t{\n");
     
@@ -616,6 +618,8 @@ void saveMap(File fileOut){
     //the constructor
     output.print("\t\tpublic function "+className+"(levelSize:FlxPoint, blockSize:FlxPoint):void {\n");
     output.print("\t\t\tsuper(levelSize, blockSize, new FlxPoint("+((tileShiftX+float(playerStart.x)+0.5)*tileSize)+","+((tileShiftY+float(playerStart.y)+0.5)*tileSize)+"));\n");
+    //NOTE 1
+    output.print("\t\t\tlegOutfit = new PlayerOutfit(72*7,55*16,Assets.RANGER2_PANTS,PlayerOutfit.LEGS_OUTFIT,Assets.RANGER2LEGS_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(legOutfit);\n\t\t\tbodyOutfit = new PlayerOutfit(42*16,49*16,Assets.RANGER2_SHIRT,PlayerOutfit.BODY_OUTFIT,Assets.RANGER2BODY_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(bodyOutfit);\n\t\t\theadOutfit = new PlayerOutfit(72*16,55*16,Assets.RANGER2_HAT,PlayerOutfit.HEAD_OUTFIT,Assets.RANGER2HEAD_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(headOutfit);\n");
     output.print("\t\t}\n\n");
     
     //function for creating the map based on the arrays
@@ -630,6 +634,9 @@ void saveMap(File fileOut){
     output.print("\t\t\t\tFlxTilemap.arrayToCSV(WALLS, "+levelWidth+"),\n");
     output.print("\t\t\t\tAssets.WALLS_TILE, tileSize.x, tileSize.y\n\t\t\t);\n");
     output.print("\t\t\twallGroup.add(tiles);\n\n");
+    
+    //NOTE 2
+    output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n\t\t\t\tFlxTilemap.arrayToCSV(FOREGROUND, 81),\n\t\t\t\tAssets.WALLS_TILE, tileSize.x, tileSize.y\n\t\t\t);\n\t\t\tforeGroundGroup.add(tiles);\n");
     
     output.print("\t\t\tdarkness = new FlxSprite(0,0);\n\t\t\tdarkness.makeGraphic(FlxG.width, FlxG.height, 0xff000000);\n");
     output.print("\t\t\tdarkness.scrollFactor.x = darkness.scrollFactor.y = 0;\n\t\t\tdarkness.blend = \"multiply\";\n");
@@ -672,13 +679,14 @@ void saveMap(File fileOut){
     output.print("\t\t\tadd(decalGroup);\n");
     output.print("\t\t\tadd(objectGroup);\n");
     output.print("\t\t\tadd(player);\n");
-    output.print("\t\t\tadd(player.mySprite);\n");
+    output.print("\t\t\tplayer.addSprites(this);\n"); //NOTE 3
     
     //enemies get inserted here for some reason
     output.print("\n");
     output.print("\t\t\tvar enemies:Vector.<Enemy> = new Vector.<Enemy>();\n");
-    output.print("\t\t\tvar light5:Light = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF);\n");
-    output.print("\t\t\tadd(light5);\n\n");
+    //output.print("\t\t\tvar light5:Light = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF);\n");
+    //output.print("\t\t\tadd(light5);\n\n");
+    output.print("\t\t\tvar enemyLight:Light;\n"); //NOTE 4
     
     for (Enemy e : enemyList){
       output.print(e.toString(tileSize, tileShiftX, tileShiftY, 3));
@@ -692,20 +700,32 @@ void saveMap(File fileOut){
     output.print("\t\t}\n\n");
     
     //drawing function
-    output.print("\t\toverride public function draw():void {\n\t\t\tdarkness.fill(0xff000000);\n\t\t\tsuper.draw();\n\t\t}\n\n");
+    output.print("\t\toverride public function draw():void {\n\t\t\tdarkness.fill(0xff888888);\n\t\t\tsuper.draw();\n\t\t}\n\n"); //NOTE 5 (changed darkness level)
     
     //transfer level function
-    output.print("\t\toverride public function transferLevel(): TopDownLevel{\n\t\t\treturn null;\n\t\t}\n\n");
+    //output.print("\t\toverride public function transferLevel(): TopDownLevel{\n\t\t\treturn null;\n\t\t}\n\n");
+    //NOTE 6
+    output.print("\t\toverride public function transferLevel(): TopDownLevel{\n\t\t\tif(super.reloadThisLevel)\n\t\t\t{\n\t\t\t\treturn " + initCode + "\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\treturn null;\n\t\t\t}\n\t\t}\n\n");
     
     //update function
     output.print("\t\toverride public function update():void {\n\t\t\tsuper.update();\n\t\t}\n\n");
     
     //normal gameplay function
+    /*
     output.print("\t\toverride public function normalGameplay():void {\n\t\t\tsuper.normalGameplay();\n");
     output.print("\t\t\tplayerLight.x = (player.x+player.width/2);\n\t\t\tplayerLight.y = (player.y-player.height/2);\n");
     output.print("\t\t\tFlxG.collide(objectGroup, player);\n\n");
     output.print("\t\t\tvar enemyMessage:int = enemyController.commandEnemies();\n");
     output.print("\t\t}\n");
+    */
+    //NOTE 7
+    output.print("\t\toverride public function normalGameplay():void\t\t{\n\t\t\tsuper.normalGameplay();\n\t\t\tplayerLight.x=(player.x+player.width/2);\n\t\t\tplayerLight.y = (player.y-player.height/2);\n\t\t\tFlxG.collide(objectGroup, player);\n\t\t\tvar newOutfit:Boolean=false;\n\t\t\tif(legOutfit!=null && FlxG.collide(legOutfit, player))\n\t\t\t{\n\t\t\t\tremove(legOutfit);\n\t\t\t\tplayer.setNewOutfit(legOutfit.getOutfitType(),legOutfit.getOutfit());\n\t\t\t\tplayer.setNewOutfitPiece(legOutfit);\n\t\t\t\tnewOutfit=true;\n\t\t\t\t//enemyController.checkCorrectOutfit()\n\t\t\t}\n\t\t\tif(bodyOutfit!=null && FlxG.collide(bodyOutfit, player))\n\t\t\t{\n\t\t\t\tremove(bodyOutfit);\n\t\t\t\tplayer.setNewOutfit(bodyOutfit.getOutfitType(),bodyOutfit.getOutfit());\n\t\t\t\tplayer.setNewOutfitPiece(bodyOutfit);\n\t\t\t\tnewOutfit=true;\n\t\t\t\t//enemyController.checkCorrectOutfit()\n\t\t\t}\n\t\t\tif(headOutfit!=null && FlxG.collide(headOutfit, player))\n\t\t\t{\n\t\t\t\tremove(headOutfit);\n\t\t\t\tplayer.setNewOutfit(headOutfit.getOutfitType(),headOutfit.getOutfit());\n\t\t\t\tplayer.setNewOutfitPiece(headOutfit);\n\t\t\t\tnewOutfit=true;\n\t\t\t\t//enemyController.checkCorrectOutfit()\n\t\t\t}\n\t\t\t//ENEMY CONTROLLER\n\t\t\tif(newOutfit)\n\t\t\t{\n\t\t\t\t//THIS PRESENTLY DOESN'T WORK, BUT IT WILL SHRINK THE GUARD'S FOV\n\t\t\t\tenemyController.commandEnemies(EnemyController.CHECK_COSTUME);\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\t//THIS MOVES THE ENEMIES\n\t\t\t\tvar enemyMessage: int = enemyController.commandEnemies();\n\t\t\t\tif(enemyMessage==EnemyController.ENEMY_SPOTTED_PLAYER)\n\t\t\t\t{\n\t\t\t\t\tsetUpQuestionState();\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n");
+    
+    //question related functions
+    //NOTE 7
+    output.print("\t\t//BEGINNING QUESTiON STATE\n\t\tprivate function setUpQuestionState():void\n\t\t{\n\t\t\t//Pause player\n\t\t\tplayer.setPaused(true);\n\t\t\t//400 is width, center allignment put's in mid of that\n\t\t\tquestionText = new FlxText(FlxG.camera.scroll.x-200+160, (220)+FlxG.camera.scroll.y, 400, enemyController.getQuestion());\n\t\t\tquestionText.alignment = \"center\";\n\t\t\t//Set Question Time State\n\t\t\tsetGameState(QUESTION_TIME);\n\t\t\tadd(questionText);\n\t\t\tvar currAnswers: Vector.<EnemyAnswer> = enemyController.getAnswers();\n\t\t\tanswerUp = new FlxText(FlxG.camera.scroll.x-40, FlxG.camera.scroll.y+50, 400, currAnswers[0].getAnswerText());//Up Answer\n\t\t\tanswerRight = new FlxText(FlxG.camera.scroll.x, FlxG.camera.scroll.y+100, 400, currAnswers[1].getAnswerText()); //Right Answer\n\t\t\tanswerLeft = new FlxText(FlxG.camera.scroll.x-80, FlxG.camera.scroll.y+100,400, currAnswers[3].getAnswerText()); //Left Answer\n\t\t\tanswerDown = new FlxText(FlxG.camera.scroll.x-40, FlxG.camera.scroll.y+150, 400, currAnswers[2].getAnswerText()); //Down Answer\n\t\t\tvar i: int;\n\t\t\tfor(i=0; i<4; i++)\n\t\t\t{\n\t\t\t\tif(currAnswers[i].isCorrectAnswer())\n\t\t\t\t{\n\t\t\t\t\tcorrectAnswer=i;\n\t\t\t\t}\n\t\t\t}\n\t\t\tanswerUp.alignment = \"center\";\n\t\t\tadd(answerUp);\n\t\t\tanswerRight.alignment = \"center\";\n\t\t\tadd(answerRight);\n\t\t\tanswerDown.alignment = \"center\";\n\t\t\tadd(answerDown);\n\t\t\tanswerLeft.alignment = \"center\";\n\t\t\tadd(answerLeft);\n\t\t}\n\n");
+    output.print("\t\t//Remove question state and return to normal gameplay state\n\t\tprivate function fromQuestionState():void\n\t\t{\n\t\t\tplayer.setPaused(false);\n\t\t\tsetGameState(NORMAL_GAMEPLAY);\n\t\t\tremove(questionText);\n\t\t\tremove(answerUp);\n\t\t\tremove(answerDown);\n\t\t\tremove(answerRight);\n\t\t\tremove(answerLeft);\n\t\t}\n\n");
+    output.print("\t\t//OVERRIDEN METHOD CALLED IN SUPER'S UPDATE\n\t\toverride public function questionGameplay():void\n\t\t{\n\t\t\tsuper.questionGameplay();\n\t\t\tenemyController.commandEnemies(EnemyController.PAUSE_ALL);\n\t\t\tif (FlxG.keys.justReleased(\"A\"))\n\t\t\t{\n\t\t\t\tif(correctAnswer==3)\n\t\t\t\t{\n\t\t\t\t\tenemyController.resetEnemies();\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\treloadLevel();\n\t\t\t\t}\n\t\t\t\tfromQuestionState();\n\t\t\t}\n\t\t\tif (FlxG.keys.justReleased(\"D\"))\n\t\t\t{\n\t\t\t\tif(correctAnswer==1)\n\t\t\t\t{\n\t\t\t\t\tenemyController.resetEnemies();\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\treloadLevel();\n\t\t\t\t}\n\t\t\t\tfromQuestionState();\n\t\t\t}\n\t\t\tif (FlxG.keys.justReleased(\"W\"))\n\t\t\t{\n\t\t\t\tif(correctAnswer==0)\n\t\t\t\t{\n\t\t\t\t\tenemyController.resetEnemies();\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\treloadLevel();\n\t\t\t\t}\n\t\t\t\tfromQuestionState();\n\t\t\t}\n\t\t\tif (FlxG.keys.justReleased(\"S\"))\n\t\t\t{\n\t\t\t\tif(correctAnswer==2)\n\t\t\t\t{\n\t\t\t\t\tenemyController.resetEnemies();\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\treloadLevel();\n\t\t\t\t}\n\t\t\t\tfromQuestionState();\n\t\t\t}\n\t\t}\n\n");
     
     //end of flash source file
     output.print("\t}\n}");

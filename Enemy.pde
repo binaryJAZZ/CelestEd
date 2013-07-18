@@ -105,7 +105,10 @@ class Enemy{
     
     enemyString += "\n";
     
-    enemyString += indentString + "var enemy" + ID + ":Enemy = new Enemy(waypointList" + ID + ", player, light5, " + (float(tileShiftX + x)*tileSize) + ", " + (float(tileShiftY + y)*tileSize) + "); \n";
+    //NOTE 4
+    enemyString += indentString + "enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);\n\n";
+    
+    enemyString += indentString + "var enemy" + ID + ":Enemy = new Enemy(waypointList" + ID + ", player, enemyLight, " + (float(tileShiftX + x)*tileSize) + ", " + (float(tileShiftY + y)*tileSize) + "); \n";
     enemyString += indentString + "enemies.push(enemy" + ID + "); \n\n";
     
     return enemyString;
