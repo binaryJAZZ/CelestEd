@@ -220,10 +220,12 @@ void draw(){
   
   //mass selection
   if (isMassSelecting){
-    massSelectRightX = getGridX();
-    massSelectBottomY = getGridY();
+    if (mouseButton == RIGHT){
+      massSelectRightX = getGridX();
+      massSelectBottomY = getGridY();
+    }
+    renderRectOnGrid(massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY, floorColor, altColor);
   }
-  renderRectOnGrid(massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY, floorColor);
   
   //mouse coordinates
   fill(lineColor);
@@ -294,17 +296,12 @@ void keyPressed(){
   
   if (key == ' ') isDraggingScreen = true;
   
-  if (key == 'c'){
-    isMassSelecting = true;
-    massSelectLeftX = getGridX();
-    massSelectTopY = getGridY();
-  }
+  if (key == 'q' && isMassSelecting) massPlaceTiles();
+  if (key == 'e' && isMassSelecting) massEraseTiles();
 }
 
 void keyReleased(){
   if (key == ' ') isDraggingScreen = false;
-  
-  if (key == 'c') isMassSelecting = false;
   
   /*
    if(key=='p')
@@ -329,13 +326,16 @@ void mousePressed(){
   boolean buttonPress = userInterface();
   
   if (!buttonPress){
-    if (isDraggingScreen){
+    if (mouseButton == RIGHT){
+      //mass selection
+      isMassSelecting = true;
+      massSelectLeftX = getGridX();
+      massSelectTopY = getGridY();
+    }
+    else if (isDraggingScreen){
+      //dragging screen
       dragScreenX = getGridX();
       dragScreenY = getGridY();
-    }
-    else if (isMassSelecting){
-      //massSelectLeftX = getGridX();
-      //massSelectTopY = getGridY();
     }
     else if (toolSelector.isSelected(0)){
       //make a tile
@@ -482,6 +482,22 @@ void mouseReleased(){
   //new stuff
   isAddingTiles = false;
   isDeletingTiles = false;
+  if (massSelectLeftX == massSelectRightX || massSelectTopY == massSelectBottomY) {
+    isMassSelecting = false;
+  }
+  if (massSelectLeftX > massSelectRightX){
+    int tmp = massSelectLeftX;
+    massSelectLeftX = massSelectRightX;
+    massSelectRightX = tmp;
+  }
+  if (massSelectTopY > massSelectBottomY){
+    int tmp = massSelectTopY;
+    massSelectTopY = massSelectBottomY;
+    massSelectBottomY = tmp;
+  }
+  if (mouseButton == RIGHT){
+    mouseButton = LEFT; //HACK to stop the selection from changing size once the user releases the mouse
+  }
 }
 
 boolean userInterface(){
@@ -1108,8 +1124,30 @@ void initButtons(){
   hideWaypoints.setIndex(1);
 }
 
-void renderRectOnGrid(int x1, int y1, int x2, int y2, int c){
-  noStroke();
-  fill(c);
+void renderRectOnGrid(int x1, int y1, int x2, int y2, int c1, int c2){
+  strokeWeight(4);
+  stroke(c2);
+  fill(c1);
   rect(getScreenX(x1), getScreenY(y1), (getScreenX(x2) + gridSize) - getScreenX(x1), (getScreenY(y2) + gridSize) - getScreenY(y1));
+}
+
+void massPlaceTiles(){
+  TileMap tileMap = tileMapList[layerSelector.getIndex()];
+  for (int x = massSelectLeftX; x <= massSelectRightX; x++){
+    for (int y = massSelectTopY; y <= massSelectBottomY; y++){
+      tileMap.removeTile(new Integer(x), new Integer(y));
+      tileMap.addTile(new Integer(x), new Integer(y), drawer.currentTilesheetIndex, drawer.currentTileIndex); 
+    }
+  }
+  recalculateLevelBounds();
+}
+
+void massEraseTiles(){
+  TileMap tileMap = tileMapList[layerSelector.getIndex()];
+  for (int x = massSelectLeftX; x <= massSelectRightX; x++){
+    for (int y = massSelectTopY; y <= massSelectBottomY; y++){
+      tileMap.removeTile(new Integer(x), new Integer(y));
+    }
+  }
+  recalculateLevelBounds();
 }
