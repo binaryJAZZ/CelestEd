@@ -38,6 +38,8 @@ TileMap floors = new TileMap("FLOORS");
 TileMap foreground = new TileMap("FOREGROUND");
 TileMap walls = new TileMap("WALLS");
 TileMap[] tileMapList = {floors, foreground, walls};
+boolean isAddingTiles = false;
+boolean isDeletingTiles = false;
 
 //loading tilesheets
 String[] supportedFileTypes = {"png", "jpg", "gif"};
@@ -65,11 +67,17 @@ Player playerStart = new Player(0,0);
 ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
 Enemy selectedEnemy = null;
 
+/*
 //Allows for holding 'p' and placing tiles
 boolean placingTiles;
 
 //Allows for holding e to erase tiles
 boolean erasingTiles;
+*/
+
+//mass selection
+boolean isMassSelecting = false;
+int massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY;
 
 void setup(){
   size(WIN_X, WIN_Y);
@@ -159,6 +167,7 @@ void draw(){
   }
   
   //Check placing tiles
+  /*
   if(placingTiles)
   {
     editTiles();
@@ -172,10 +181,49 @@ void draw(){
     TileMap tileMap = tileMapList[layerSelector.getIndex()];
      tileMap.removeTile(gridX, gridY);
   }
+  */
+  TileMap tileMap = tileMapList[layerSelector.getIndex()];
+  Integer gridX = new Integer(getGridX());
+  Integer gridY = new Integer(getGridY());
+  
+  if (isAddingTiles){
+    //update level boundaries
+    boolean noTilesYet = (walls.size() == 0 && floors.size() == 0 && foreground.size() == 0);
+    if (noTilesYet || getGridX() < leftEdge){
+      leftEdge = getGridX();
+    }
+    if (noTilesYet || getGridX() > rightEdge){
+      rightEdge = getGridX();
+    }
+    if (noTilesYet || getGridY() < topEdge){
+      topEdge = getGridY();
+    }
+    if (noTilesYet || getGridY() > bottomEdge){
+      bottomEdge = getGridY();
+    }
+    tileMap.removeTile(gridX, gridY);
+    tileMap.addTile(gridX, gridY, drawer.currentTilesheetIndex, drawer.currentTileIndex);  
+  }
+  
+  if (isDeletingTiles){
+    tileMap.removeTile(gridX, gridY);
+    //Check what the new map bounds are
+    if (getGridX() == leftEdge || getGridX() == rightEdge || 
+        getGridY() == topEdge || getGridY() == bottomEdge){
+      recalculateLevelBounds();
+    }
+  }
   
   
   //cursor
   drawCursor();
+  
+  //mass selection
+  if (isMassSelecting){
+    massSelectRightX = getGridX();
+    massSelectBottomY = getGridY();
+  }
+  renderRectOnGrid(massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY, floorColor);
   
   //mouse coordinates
   fill(lineColor);
@@ -231,6 +279,7 @@ void keyPressed(){
   if (key == '-' && gridSize > minGridSize) gridSize /= 2;
   if (key == '=' && gridSize < maxGridSize) gridSize *= 2;
   
+  /*
   if(key=='p')
   {
     placingTiles=true;
@@ -241,13 +290,23 @@ void keyPressed(){
   {
     erasingTiles=true;
   }
+  */
   
   if (key == ' ') isDraggingScreen = true;
+  
+  if (key == 'c'){
+    isMassSelecting = true;
+    massSelectLeftX = getGridX();
+    massSelectTopY = getGridY();
+  }
 }
 
 void keyReleased(){
   if (key == ' ') isDraggingScreen = false;
   
+  if (key == 'c') isMassSelecting = false;
+  
+  /*
    if(key=='p')
   {
     placingTiles=false;
@@ -263,6 +322,7 @@ void keyReleased(){
       recalculateLevelBounds();
     }
   }
+  */
 }
 
 void mousePressed(){
@@ -273,11 +333,27 @@ void mousePressed(){
       dragScreenX = getGridX();
       dragScreenY = getGridY();
     }
+    else if (isMassSelecting){
+      //massSelectLeftX = getGridX();
+      //massSelectTopY = getGridY();
+    }
     else if (toolSelector.isSelected(0)){
       //make a tile
-      editTiles();
+      //editTiles();
+      
+      //new version:
+      TileMap tileMap = tileMapList[layerSelector.getIndex()];
+      if (tileMap.getTile(new Integer(getGridX()), new Integer(getGridY())) == null){
+        isAddingTiles = true;
+        isDeletingTiles = false;
+      }
+      else {
+        isAddingTiles = false;
+        isDeletingTiles = true;
+      }
     }
     else if (toolSelector.isSelected(1)){
+      //edit rooms
       if (!hideRooms.isSelected()){
         editRooms();
       }
@@ -288,9 +364,48 @@ void mousePressed(){
       playerStart.y = getGridY();
     }
     else if (toolSelector.isSelected(3)){
+      //edit enemies
       editEnemies();
     }
   }
+}
+
+void editTiles(){
+  //update level boundaries
+  boolean noTilesYet = (walls.size() == 0 && floors.size() == 0 && foreground.size() == 0);
+  if (noTilesYet || getGridX() < leftEdge){
+    leftEdge = getGridX();
+  }
+  if (noTilesYet || getGridX() > rightEdge){
+    rightEdge = getGridX();
+  }
+  if (noTilesYet || getGridY() < topEdge){
+    topEdge = getGridY();
+  }
+  if (noTilesYet || getGridY() > bottomEdge){
+    bottomEdge = getGridY();
+  }
+  
+  //choose the correct layer of tiles
+  //depending on what is selected in the menu
+  TileMap tileMap = tileMapList[layerSelector.getIndex()];
+  
+  //attempt to add a new tile to the selected layer
+  Integer gridX = new Integer(getGridX());
+  Integer gridY = new Integer(getGridY());
+  boolean tileAddSuccessful = tileMap.addTile(gridX, gridY, drawer.currentTilesheetIndex, drawer.currentTileIndex);
+                  
+  //if you can't add a tile, that means there is already one at that position on that layer
+  //delete the offending tile  (UNLESS WE'RE PLACING TILES)
+  if (!tileAddSuccessful /*&& !placingTiles*/){        
+    tileMap.removeTile(gridX, gridY);
+    
+    if (getGridX() == leftEdge || getGridX() == rightEdge || 
+        getGridY() == topEdge || getGridY() == bottomEdge){
+      recalculateLevelBounds();
+    }
+  }
+ 
 }
 
 void editRooms(){
@@ -363,6 +478,10 @@ void mouseReleased(){
     //print(selectedRoom.toString(16));
   }
   selectedRoom = null;
+  
+  //new stuff
+  isAddingTiles = false;
+  isDeletingTiles = false;
 }
 
 boolean userInterface(){
@@ -439,44 +558,6 @@ boolean userInterface(){
   }
   
   return buttonPress;
-}
-
-void editTiles(){
-  //update level boundaries
-  boolean noTilesYet = (walls.size() == 0 && floors.size() == 0 && foreground.size() == 0);
-  if (noTilesYet || getGridX() < leftEdge){
-    leftEdge = getGridX();
-  }
-  if (noTilesYet || getGridX() > rightEdge){
-    rightEdge = getGridX();
-  }
-  if (noTilesYet || getGridY() < topEdge){
-    topEdge = getGridY();
-  }
-  if (noTilesYet || getGridY() > bottomEdge){
-    bottomEdge = getGridY();
-  }
-  
-  //choose the correct layer of tiles
-  //depending on what is selected in the menu
-  TileMap tileMap = tileMapList[layerSelector.getIndex()];
-  
-  //attempt to add a new tile to the selected layer
-  Integer gridX = new Integer(getGridX());
-  Integer gridY = new Integer(getGridY());
-  boolean tileAddSuccessful = tileMap.addTile(gridX, gridY, drawer.currentTilesheetIndex, drawer.currentTileIndex);
-                  
-  //if you can't add a tile, that means there is already one at that position on that layer
-  //delete the offending tile  (UNLESS WE'RE PLACING TILES)
-  if (!tileAddSuccessful && !placingTiles){        
-    tileMap.removeTile(gridX, gridY);
-    
-    if (getGridX() == leftEdge || getGridX() == rightEdge || 
-        getGridY() == topEdge || getGridY() == bottomEdge){
-      recalculateLevelBounds();
-    }
-  }
- 
 }
 
 void drawGrid(int c){
@@ -1025,4 +1106,10 @@ void initButtons(){
   hideWaypoints = new Button(0,255,"Hide Enemy Waypoints","Show Enemy Waypoints");
   optionsButtons.add(hideWaypoints);
   hideWaypoints.setIndex(1);
+}
+
+void renderRectOnGrid(int x1, int y1, int x2, int y2, int c){
+  noStroke();
+  fill(c);
+  rect(getScreenX(x1), getScreenY(y1), (getScreenX(x2) + gridSize) - getScreenX(x1), (getScreenY(y2) + gridSize) - getScreenY(y1));
 }
