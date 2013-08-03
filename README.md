@@ -61,11 +61,32 @@ white is a non-colliding layer (floor or foreground), and black is a collding la
 >NOTE: In the top left corner you can see the coordinates "(X, Y)" of the grid square you're cursor is in.
 
 Click on an empty square in the grid to place the currently selected tile there. To delete a tile, click
-on it again.
+on it again. 
 
 >NOTE: You can only delete a tile while using the TILES tool *and* while on the same layer. If you try
 >to delete a tile on the floor layer while you're on the wall layer, you'll end up adding a wall tile
 >instead!
+
+>IMPORTANT: The following paragraph contains a *change* from the previous version.
+
+To place several of the same type of tile at once, keep moving your mouse as you hold it down. Until
+you release the mouse you will keep placing tiles. The same goes for deleting tiles.
+
+#### Mass Editing of Tiles ####
+To select a large mass of tiles simultaneously, right click (or ctrl-click on Macs) and drag. A transparent
+white rectangle will show the selection area. You can un-select by right clicking somewhere else *without* dragging.
+
+Once you have an area selected, you can press 'Q' to fill that area (on the current layer) with the tile type you
+have selected in the tile drawer. If you press 'E' every tile in that area will be erased (if it's on the current layer).
+
+#### Copy-and-Pasting ####
+When you have an area of tiles selected, you can copy that area by pressing 'C'. Once an area has been copied,
+you can paste it somewhere else by first selecting the target area, and then pressing 'V'. Note that the top
+left corner of the copied group of tiles will correspond with the top left corner of the target area. You will
+copy and paste from whichever layer you have currently selected.
+
+>IMPORTANT: If you copy tiles from one tileset and switch to another before pasting, everything will get
+>messed up. Sorry.
 
 #### Switching Layers ###
 While you're using the TILES tool, there will be a button under the "Switch tools" button that should 
@@ -182,3 +203,7 @@ To delete a waypoint, click on it while using the ENEMY tool, with the desired e
 
 >NOTE: You currently can't select enemies in WAYPOINT mode. To switch which enemy's waypont path you're editing, you
 >have to go back to ENEMY mode, select the enemy, and then return to WAYPOINT mode.
+
+To see all enemies' fields of view (FOVs) as they walk along their waypoint paths, go under the options menu
+and press the "Show enemy FOVs" button. Press it again (when it reads "Hide enemy FOVs") to make the FOVs
+dissapear. FOVs will also be invisible if enemies are invisible.
