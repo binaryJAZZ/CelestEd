@@ -27,6 +27,7 @@ int floorColor = color(255,255,255,150); //transparent white
 int drawerColor = color(15,45,95); //dark blue
 int deleteColor = color(185,22,22); //dark red
 int altColor2 = color(0,0,0); //black
+int altColor3 = color(245,209,79,150); //transparent gold
 
 //grid
 int gridSize = 32; //the width & height of one square on the grid
@@ -60,7 +61,7 @@ ArrayList<Button> optionsButtons = new ArrayList<Button>();
 TileDrawer drawer;
 Button saveButton, openButton;
 Button toolSelector, layerSelector, enemyModeSelector;
-Button hideCollisionMap, hideLevelBounds, hideGrid, hideTextures, hideRooms, hideTileDrawer, hidePlayer, hideEnemies, hideWaypoints;
+Button hideCollisionMap, hideLevelBounds, hideGrid, hideTextures, hideRooms, hideTileDrawer, hidePlayer, hideEnemies, hideWaypoints, hideFOV;
 
 //player and enemies
 Player playerStart = new Player(0,0);
@@ -78,6 +79,9 @@ boolean erasingTiles;
 //mass selection
 boolean isMassSelecting = false;
 int massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY;
+
+//copy and paste
+int[][] copiedTileIndexes;
 
 void setup(){
   size(WIN_X, WIN_Y);
@@ -157,6 +161,11 @@ void draw(){
         if (!hideWaypoints.isSelected()){
           e.renderWaypoints(wallColor);
         }
+      }
+      
+      //display enemy FOV
+      if (!hideFOV.isSelected()){
+        e.renderFOV(altColor3, gridSize*5);
       }
     }
   }
@@ -298,6 +307,9 @@ void keyPressed(){
   
   if (key == 'q' && isMassSelecting) massPlaceTiles();
   if (key == 'e' && isMassSelecting) massEraseTiles();
+  
+  if (key == 'c' && isMassSelecting) copyTiles(massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY);
+  if (key == 'v' && isMassSelecting) pasteTiles(massSelectLeftX, massSelectTopY);
 }
 
 void keyReleased(){
@@ -1122,6 +1134,10 @@ void initButtons(){
   hideWaypoints = new Button(0,255,"Hide Enemy Waypoints","Show Enemy Waypoints");
   optionsButtons.add(hideWaypoints);
   hideWaypoints.setIndex(1);
+  
+  hideFOV = new Button(0,270,"Hide Enemy FOV","Show Enemy FOV");
+  optionsButtons.add(hideFOV);
+  hideFOV.setIndex(1);
 }
 
 void renderRectOnGrid(int x1, int y1, int x2, int y2, int c1, int c2){
@@ -1150,4 +1166,36 @@ void massEraseTiles(){
     }
   }
   recalculateLevelBounds();
+}
+
+void copyTiles(int x1, int y1, int x2, int y2){
+  TileMap tileMap = tileMapList[layerSelector.getIndex()];
+  int selectWidth = x2 - x1 + 1;
+  int selectHeight = y2 - y1 + 1;
+  copiedTileIndexes = new int[selectWidth][selectHeight];
+  
+  for (int i = 0; i < copiedTileIndexes.length; i++){
+    for (int j = 0; j < copiedTileIndexes[i].length; j++){
+        Tile t = tileMap.getTile(new Integer(x1+i), new Integer(y1+j));
+        if (t != null){
+          copiedTileIndexes[i][j] = t.tileIndex;
+        }
+        else{
+          copiedTileIndexes[i][j] = -1; //no tile
+        }
+    }
+  }
+}
+
+void pasteTiles(int x, int y){
+  TileMap tileMap = tileMapList[layerSelector.getIndex()];
+  
+  for (int i = 0; i < copiedTileIndexes.length; i++){
+    for (int j = 0; j < copiedTileIndexes[i].length; j++){
+      if (copiedTileIndexes[i][j] != -1){
+        tileMap.removeTile(new Integer(x+i), new Integer(y+j));
+        tileMap.addTile(new Integer(x+i), new Integer(y+j), drawer.currentTilesheetIndex, copiedTileIndexes[i][j]);
+      }
+    }
+  }
 }

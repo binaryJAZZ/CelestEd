@@ -61,6 +61,22 @@ class Enemy{
     }
   }
   
+  void renderFOV(int c, float fovWidth){
+    Waypoint prevWaypoint = null;
+    int curIndex = 0;
+    
+    for (Waypoint w : waypoints){
+      if (prevWaypoint != null){
+        strokeWeight(fovWidth);
+        stroke(c);
+        line(getScreenX(prevWaypoint.x)+gridSize*0.5, getScreenY(prevWaypoint.y)+gridSize*0.5, getScreenX(w.x)+gridSize*0.5, getScreenY(w.y)+gridSize*0.5);
+      }
+      
+      prevWaypoint = w;
+      curIndex++;
+    }
+  }
+  
   boolean hasWaypoint(int x, int y){
     boolean has = false;
     
