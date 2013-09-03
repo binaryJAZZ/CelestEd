@@ -28,6 +28,7 @@ int drawerColor = color(15,45,95); //dark blue
 int deleteColor = color(185,22,22); //dark red
 int altColor2 = color(0,0,0); //black
 int altColor3 = color(245,209,79,150); //transparent gold
+int dropletColor = color(162, 203, 255);
 
 //grid
 int gridSize = 32; //the width & height of one square on the grid
@@ -61,12 +62,15 @@ ArrayList<Button> optionsButtons = new ArrayList<Button>();
 TileDrawer drawer;
 Button saveButton, openButton;
 Button toolSelector, layerSelector, enemyModeSelector;
-Button hideCollisionMap, hideLevelBounds, hideGrid, hideTextures, hideRooms, hideTileDrawer, hidePlayer, hideEnemies, hideWaypoints, hideFOV;
+Button hideCollisionMap, hideLevelBounds, hideGrid, hideTextures, hideRooms, hideTileDrawer, hidePlayer, hideEnemies, hideWaypoints, hideFOV, hideDroplets;
 
 //player and enemies
 Player playerStart = new Player(0,0);
 ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
 Enemy selectedEnemy = null;
+
+//items
+ArrayList<WaterDroplet> dropletList = new ArrayList<WaterDroplet>();
 
 /*
 //Allows for holding 'p' and placing tiles
@@ -127,6 +131,13 @@ void draw(){
   //grid lines
   if (!hideGrid.isSelected()){
     drawGrid(lineColor);
+  }
+  
+  //water droplets
+  if (!hideDroplets.isSelected()){
+    for (WaterDroplet w : dropletList) {
+      w.render(dropletColor);
+    }
   }
   
   //player
@@ -378,6 +389,9 @@ void mousePressed(){
     else if (toolSelector.isSelected(3)){
       //edit enemies
       editEnemies();
+    }
+    else if (toolSelector.isSelected(4)){
+      editWaterDroplets();
     }
   }
 }
@@ -719,16 +733,22 @@ void saveMap(File fileOut){
     output.print("\t\tprotected var decalGroup:FlxGroup;\n");
     output.print("\t\tprotected var objectGroup:FlxGroup;\n\n");
     
+    /*
     output.print("\t\tprivate var darkness:FlxSprite;\n");
     output.print("\t\tprivate var playerLight:Light;\n\n");
     
     output.print("\t\tprivate var enemyController:EnemyController;\n\n");
+    */
     
     //the constructor
     output.print("\t\tpublic function "+className+"(levelSize:FlxPoint, blockSize:FlxPoint):void {\n");
     output.print("\t\t\tsuper(levelSize, blockSize, new FlxPoint("+((tileShiftX+float(playerStart.x)+0.5)*tileSize)+","+((tileShiftY+float(playerStart.y)+0.5)*tileSize)+"));\n");
-    //NOTE 1
     output.print("\t\t\tlegOutfit = new PlayerOutfit(72*7,55*16,Assets.RANGER2_PANTS,PlayerOutfit.LEGS_OUTFIT,Assets.RANGER2LEGS_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(legOutfit);\n\t\t\tbodyOutfit = new PlayerOutfit(42*16,49*16,Assets.RANGER2_SHIRT,PlayerOutfit.BODY_OUTFIT,Assets.RANGER2BODY_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(bodyOutfit);\n\t\t\theadOutfit = new PlayerOutfit(72*16,55*16,Assets.RANGER2_HAT,PlayerOutfit.HEAD_OUTFIT,Assets.RANGER2HEAD_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(headOutfit);\n");
+    output.print("\t\t}\n\n");
+    
+    //function for hideable objects
+    output.print("\t\toverride protected function addHideableObjects():void {\n");
+    output.print("\t\t\tsuper.addHideableObjects();\n");
     output.print("\t\t}\n\n");
     
     //function for creating the map based on the arrays
@@ -752,6 +772,7 @@ void saveMap(File fileOut){
     output.print("\t\t\tplayerLight = new Light(Assets.LightImageClass, FlxG.width / 2, FlxG.height / 2, darkness);\n");
     
     //room data
+    /*
     output.print("\n");
     output.print("\t\t\t//room data");
     output.print("\n");
@@ -769,6 +790,7 @@ void saveMap(File fileOut){
 
     output.print("\t\t\tcurrRoom = room"+playerStart.closestRoom(roomList).ID+"; //replace with room of your choice\n");
     output.print("\t\t\tfocusOnCurrRoom();\n\n");
+    */
     
     output.print("\t\t\tcreateObjects();\n\t\t}\n\n");
     
@@ -779,30 +801,37 @@ void saveMap(File fileOut){
     output.print("\t\toverride protected function createPlayer():void {\n\t\t\tplayer = new Player(playerStart.x, playerStart.y);\n\t\t}\n\n");
     
     //function for creating the GUI
-    output.print("\t\toverride protected function createGUI():void {\n\t\t}\n\n");
+    output.print("\t\toverride protected function createGUI():void {\n\t\t\tsuper.createGUI();\n\t\t}\n\n");
+    
+    //function to add water droplets
+    output.print("\t\toverride protected function createWaterDroplets():void {\n\t\t\tvar waterDrop:FlxSprite;\n\t\t\twaterDrops = new FlxGroup();\n\n");
+    for (WaterDroplet w : dropletList) {
+      output.print(w.toString(tileSize, tileShiftX, tileShiftY, 3));
+    }
+    output.print("\t\t}\n\n");
+    
+    //function for adding enemies
+    output.print("\t\toverride protected function addEnemies(): void {\n");
+    output.print("\n");
+    output.print("\t\t\tvar enemies:Vector.<Enemy> = new Vector.<Enemy>();\n");
+    output.print("\t\t\tvar enemyLight:Light;\n");    
+    for (Enemy e : enemyList){
+      output.print(e.toString(tileSize, tileShiftX, tileShiftY, 3));
+    }
+    output.print("\t\t\tenemyController = new EnemyController(enemies);\n");
+    output.print("\t\t}\n\n");
     
     //function for adding all the object groups - order determines how things are draw
     output.print("\t\toverride protected function addGroups(): void {\n");
     output.print("\t\t\tadd(floorGroup);\n");
     output.print("\t\t\tadd(wallGroup);\n");
+    output.print("\t\t\tvar i: int;\n\t\t\tif(hideableObjects!=null)\n\t\t\t{\n\t\t\t\tfor(i =0; i<hideableObjects.length; i++)\n\t\t\t\t{\n\t\t\t\t\tadd(hideableObjects[i]);\n\t\t\t\t}\n\t\t\t}\n");
     output.print("\t\t\tadd(decalGroup);\n");
+    output.print("\t\t\tadd(waterDrops);\n");
     output.print("\t\t\tadd(objectGroup);\n");
     output.print("\t\t\tadd(player);\n");
-    output.print("\t\t\tplayer.addSprites(this);\n"); //NOTE 3
-    
-    //enemies get inserted here for some reason
-    output.print("\n");
-    output.print("\t\t\tvar enemies:Vector.<Enemy> = new Vector.<Enemy>();\n");
-    //output.print("\t\t\tvar light5:Light = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF);\n");
-    //output.print("\t\t\tadd(light5);\n\n");
-    output.print("\t\t\tvar enemyLight:Light;\n"); //NOTE 4
-    
-    for (Enemy e : enemyList){
-      output.print(e.toString(tileSize, tileShiftX, tileShiftY, 3));
-    }
-    output.print("\t\t\tenemyController = new EnemyController(enemies);\n");
-    output.print("\t\t\tadd(enemyController);\n\n");
-    
+    output.print("\t\t\tplayer.addSprites(this);\n");
+    output.print("\t\t\tadd(enemyController);\n");
     output.print("\t\t\tadd(playerLight);\n");
     output.print("\t\t\tadd(darkness);\n");
     output.print("\t\t\tadd(guiGroup);\n");
@@ -827,6 +856,8 @@ void saveMap(File fileOut){
     output.print("\t\t\tvar enemyMessage:int = enemyController.commandEnemies();\n");
     output.print("\t\t}\n");
     */
+    
+    /*
     //NOTE 7
     output.print("\t\toverride public function normalGameplay():void\t\t{\n\t\t\tsuper.normalGameplay();\n\t\t\tplayerLight.x=(player.x+player.width/2);\n\t\t\tplayerLight.y = (player.y-player.height/2);\n\t\t\tFlxG.collide(objectGroup, player);\n\t\t\tvar newOutfit:Boolean=false;\n\t\t\tif(legOutfit!=null && FlxG.collide(legOutfit, player))\n\t\t\t{\n\t\t\t\tremove(legOutfit);\n\t\t\t\tplayer.setNewOutfit(legOutfit.getOutfitType(),legOutfit.getOutfit());\n\t\t\t\tplayer.setNewOutfitPiece(legOutfit);\n\t\t\t\tnewOutfit=true;\n\t\t\t\t//enemyController.checkCorrectOutfit()\n\t\t\t}\n\t\t\tif(bodyOutfit!=null && FlxG.collide(bodyOutfit, player))\n\t\t\t{\n\t\t\t\tremove(bodyOutfit);\n\t\t\t\tplayer.setNewOutfit(bodyOutfit.getOutfitType(),bodyOutfit.getOutfit());\n\t\t\t\tplayer.setNewOutfitPiece(bodyOutfit);\n\t\t\t\tnewOutfit=true;\n\t\t\t\t//enemyController.checkCorrectOutfit()\n\t\t\t}\n\t\t\tif(headOutfit!=null && FlxG.collide(headOutfit, player))\n\t\t\t{\n\t\t\t\tremove(headOutfit);\n\t\t\t\tplayer.setNewOutfit(headOutfit.getOutfitType(),headOutfit.getOutfit());\n\t\t\t\tplayer.setNewOutfitPiece(headOutfit);\n\t\t\t\tnewOutfit=true;\n\t\t\t\t//enemyController.checkCorrectOutfit()\n\t\t\t}\n\t\t\t//ENEMY CONTROLLER\n\t\t\tif(newOutfit)\n\t\t\t{\n\t\t\t\t//THIS PRESENTLY DOESN'T WORK, BUT IT WILL SHRINK THE GUARD'S FOV\n\t\t\t\tenemyController.commandEnemies(EnemyController.CHECK_COSTUME);\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\t//THIS MOVES THE ENEMIES\n\t\t\t\tvar enemyMessage: int = enemyController.commandEnemies();\n\t\t\t\tif(enemyMessage==EnemyController.ENEMY_SPOTTED_PLAYER)\n\t\t\t\t{\n\t\t\t\t\tsetUpQuestionState();\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n");
     
@@ -835,6 +866,10 @@ void saveMap(File fileOut){
     output.print("\t\t//BEGINNING QUESTiON STATE\n\t\tprivate function setUpQuestionState():void\n\t\t{\n\t\t\t//Pause player\n\t\t\tplayer.setPaused(true);\n\t\t\t//400 is width, center allignment put's in mid of that\n\t\t\tquestionText = new FlxText(FlxG.camera.scroll.x-200+160, (220)+FlxG.camera.scroll.y, 400, enemyController.getQuestion());\n\t\t\tquestionText.alignment = \"center\";\n\t\t\t//Set Question Time State\n\t\t\tsetGameState(QUESTION_TIME);\n\t\t\tadd(questionText);\n\t\t\tvar currAnswers: Vector.<EnemyAnswer> = enemyController.getAnswers();\n\t\t\tanswerUp = new FlxText(FlxG.camera.scroll.x-40, FlxG.camera.scroll.y+50, 400, currAnswers[0].getAnswerText());//Up Answer\n\t\t\tanswerRight = new FlxText(FlxG.camera.scroll.x, FlxG.camera.scroll.y+100, 400, currAnswers[1].getAnswerText()); //Right Answer\n\t\t\tanswerLeft = new FlxText(FlxG.camera.scroll.x-80, FlxG.camera.scroll.y+100,400, currAnswers[3].getAnswerText()); //Left Answer\n\t\t\tanswerDown = new FlxText(FlxG.camera.scroll.x-40, FlxG.camera.scroll.y+150, 400, currAnswers[2].getAnswerText()); //Down Answer\n\t\t\tvar i: int;\n\t\t\tfor(i=0; i<4; i++)\n\t\t\t{\n\t\t\t\tif(currAnswers[i].isCorrectAnswer())\n\t\t\t\t{\n\t\t\t\t\tcorrectAnswer=i;\n\t\t\t\t}\n\t\t\t}\n\t\t\tanswerUp.alignment = \"center\";\n\t\t\tadd(answerUp);\n\t\t\tanswerRight.alignment = \"center\";\n\t\t\tadd(answerRight);\n\t\t\tanswerDown.alignment = \"center\";\n\t\t\tadd(answerDown);\n\t\t\tanswerLeft.alignment = \"center\";\n\t\t\tadd(answerLeft);\n\t\t}\n\n");
     output.print("\t\t//Remove question state and return to normal gameplay state\n\t\tprivate function fromQuestionState():void\n\t\t{\n\t\t\tplayer.setPaused(false);\n\t\t\tsetGameState(NORMAL_GAMEPLAY);\n\t\t\tremove(questionText);\n\t\t\tremove(answerUp);\n\t\t\tremove(answerDown);\n\t\t\tremove(answerRight);\n\t\t\tremove(answerLeft);\n\t\t}\n\n");
     output.print("\t\t//OVERRIDEN METHOD CALLED IN SUPER'S UPDATE\n\t\toverride public function questionGameplay():void\n\t\t{\n\t\t\tsuper.questionGameplay();\n\t\t\tenemyController.commandEnemies(EnemyController.PAUSE_ALL);\n\t\t\tif (FlxG.keys.justReleased(\"A\"))\n\t\t\t{\n\t\t\t\tif(correctAnswer==3)\n\t\t\t\t{\n\t\t\t\t\tenemyController.resetEnemies();\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\treloadLevel();\n\t\t\t\t}\n\t\t\t\tfromQuestionState();\n\t\t\t}\n\t\t\tif (FlxG.keys.justReleased(\"D\"))\n\t\t\t{\n\t\t\t\tif(correctAnswer==1)\n\t\t\t\t{\n\t\t\t\t\tenemyController.resetEnemies();\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\treloadLevel();\n\t\t\t\t}\n\t\t\t\tfromQuestionState();\n\t\t\t}\n\t\t\tif (FlxG.keys.justReleased(\"W\"))\n\t\t\t{\n\t\t\t\tif(correctAnswer==0)\n\t\t\t\t{\n\t\t\t\t\tenemyController.resetEnemies();\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\treloadLevel();\n\t\t\t\t}\n\t\t\t\tfromQuestionState();\n\t\t\t}\n\t\t\tif (FlxG.keys.justReleased(\"S\"))\n\t\t\t{\n\t\t\t\tif(correctAnswer==2)\n\t\t\t\t{\n\t\t\t\t\tenemyController.resetEnemies();\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\treloadLevel();\n\t\t\t\t}\n\t\t\t\tfromQuestionState();\n\t\t\t}\n\t\t}\n\n");
+    */
+    
+    //new normal gameplay function
+    output.print("\t\toverride public function normalGameplay():void {\n\t\t\tsuper.normalGameplay();\n\t\t\tFlxG.collide(objectGroup, player);\n\t\t}\n");
     
     //end of flash source file
     output.print("\t}\n}");
@@ -857,6 +892,7 @@ void loadMap(File fileIn){
     ArrayList<Room> newRoomList = new ArrayList<Room>();
     ArrayList<Enemy> newEnemyList = new ArrayList<Enemy>();
     ArrayList<Waypoint> waypointList = new ArrayList<Waypoint>();
+    ArrayList<WaterDroplet> newDropletList = new ArrayList<WaterDroplet>();
     
     //String mapFileStr = "";
     for (String curLine : loadStrings(fileIn.getAbsolutePath())){
@@ -882,6 +918,18 @@ void loadMap(File fileIn){
         //found a waypoint!
         String[] waypointStr = splitTokens(curWords[1], "()")[1].split(",");
         waypointList.add(new Waypoint(int(Float.parseFloat(waypointStr[0])/tileSize), int(Float.parseFloat(waypointStr[1])/tileSize)));
+      }
+      
+      if (curWords.length > 1 && curWords[0].equals("waterDrop")){
+        println("droplet!!");
+        //found a droplet
+        String dropletStrX = splitTokens(curWords[3], "(")[1].replace(",","");
+        println(dropletStrX.replace(",",""));
+        String dropletStrY = curWords[4].replace(",","");
+        dropletStrY.replace(",","");
+        println(dropletStrX);
+        println(dropletStrY);
+        newDropletList.add(new WaterDroplet(int(Float.parseFloat(dropletStrX)/tileSize), int(Float.parseFloat(dropletStrY)/tileSize)));
       }
       
       
@@ -977,6 +1025,7 @@ void loadMap(File fileIn){
     
     roomList = newRoomList;
     enemyList = newEnemyList;
+    dropletList = newDropletList;
     selectedEnemy = null;
   }
   catch(Exception e){
@@ -1095,7 +1144,7 @@ void initButtons(){
   openButton = new Button(0,45,"Import From File");
   
   
-  toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)"});
+  toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)", "Switch tool (WATER DROPLETS)"});
   layerSelector = new Button(0,90,new String[]{"Switch layer (FLOOR)","Switch layer (FOREGROUND)","Switch layer (WALL)"});
   enemyModeSelector = new Button(0,90,"Switch mode (ENEMY)","Switch mode (WAYPOINT)");
   
@@ -1138,6 +1187,10 @@ void initButtons(){
   hideFOV = new Button(0,270,"Hide Enemy FOV","Show Enemy FOV");
   optionsButtons.add(hideFOV);
   hideFOV.setIndex(1);
+  
+  hideDroplets = new Button(0,285,"Hide Droplets", "Show Droplets");
+  optionsButtons.add(hideDroplets);
+  hideDroplets.setIndex(1);
 }
 
 void renderRectOnGrid(int x1, int y1, int x2, int y2, int c1, int c2){
@@ -1197,5 +1250,21 @@ void pasteTiles(int x, int y){
         tileMap.addTile(new Integer(x+i), new Integer(y+j), drawer.currentTilesheetIndex, copiedTileIndexes[i][j]);
       }
     }
+  }
+}
+
+void editWaterDroplets(){
+  WaterDroplet found = null;
+  for (WaterDroplet w : dropletList) {
+    if (w.x == getGridX() && w.y == getGridY()) {
+      found = w;
+    }
+  }
+  
+  if (found == null){
+    dropletList.add(new WaterDroplet(getGridX(), getGridY()));
+  }
+  else {
+    dropletList.remove(found);
   }
 }
