@@ -565,6 +565,8 @@ boolean userInterface(){
       hidePlayer.setIndex(1);
       hideEnemies.setIndex(1);
       hideWaypoints.setIndex(1);
+      
+      hideDroplets.setIndex(1);
     }
     else if (toolSelector.isSelected(1)){
       hideTileDrawer.setIndex(1);
@@ -586,6 +588,9 @@ boolean userInterface(){
       hidePlayer.setIndex(0);
       hideEnemies.setIndex(0);
       hideWaypoints.setIndex(0);
+    }
+    else if (toolSelector.isSelected(4)){
+      hideDroplets.setIndex(0);
     }
   }
   
@@ -835,6 +840,7 @@ void saveMap(File fileOut){
     output.print("\t\t\tadd(playerLight);\n");
     output.print("\t\t\tadd(darkness);\n");
     output.print("\t\t\tadd(guiGroup);\n");
+    output.print("\t\t\t//absolutely necessary for some reason\n\t\t\tdebugText = new FlxText(FlxG.camera.scroll.x,FlxG.camera.scroll.y,100);\n\t\t\tdebugText.text = \"Debug: \";\n");
     output.print("\t\t}\n\n");
     
     //drawing function
