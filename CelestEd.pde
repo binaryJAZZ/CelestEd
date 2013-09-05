@@ -769,7 +769,7 @@ void loadSprites(String spriteDirectoryPath){
       
       if (Arrays.asList(supportedFileTypes).contains(fileType.toLowerCase())){
         //add sprite
-        println(fileInfo[0]);
+        //println(fileInfo[0]);
         spriteList.add(new Sprite(fileInfo[0], loadImage(spriteDirectoryPath + "/" + fileName)));
       }  
     }
@@ -849,6 +849,11 @@ void saveMap(File fileOut){
     //function for hideable objects
     output.print("\t\toverride protected function addHideableObjects():void {\n");
     output.print("\t\t\tsuper.addHideableObjects();\n");
+    for (Sprite s : sprites){
+      if (s.isHideable){
+        output.print(s.toString(tileSize, tileShiftX, tileShiftY, 3));
+      }
+    }
     output.print("\t\t}\n\n");
     
     //function for creating the map based on the arrays
@@ -895,7 +900,15 @@ void saveMap(File fileOut){
     output.print("\t\t\tcreateObjects();\n\t\t}\n\n");
     
     //function for creating objects
-    output.print("\t\tprotected function createObjects():void {\n\t\t\tvar sprite:FlxSprite;\n\t\t\tdecalGroup = new FlxGroup();\n\t\t\tobjectGroup = new FlxGroup();\n\t\t}\n\n");
+    output.print("\t\tprotected function createObjects():void {\n\t\t\tvar sprite:FlxSprite;\n\t\t\tdecalGroup = new FlxGroup();\n\t\t\tobjectGroup = new FlxGroup();\n\n");
+    for (Sprite s : sprites){
+      if (!s.isHideable){
+        output.print(s.toString(tileSize, tileShiftX, tileShiftY, 3));
+        output.print("\t\t\tsprite.immovable=true;\n");
+        output.print("\t\t\tobjectGroup.add(sprite);\n\n");
+      }
+    }
+    output.print("\t\t}\n\n");
     
     //function for initializing the player
     output.print("\t\toverride protected function createPlayer():void {\n\t\t\tplayer = new Player(playerStart.x, playerStart.y);\n\t\t}\n\n");
@@ -1022,15 +1035,57 @@ void loadMap(File fileIn){
       }
       
       if (curWords.length > 1 && curWords[0].equals("waterDrop")){
-        println("droplet!!");
+        //println("droplet!!");
         //found a droplet
         String dropletStrX = splitTokens(curWords[3], "(")[1].replace(",","");
-        println(dropletStrX.replace(",",""));
+        //println(dropletStrX.replace(",",""));
         String dropletStrY = curWords[4].replace(",","");
         dropletStrY.replace(",","");
-        println(dropletStrX);
-        println(dropletStrY);
+        //println(dropletStrX);
+        //println(dropletStrY);
         newDropletList.add(new WaterDroplet(int(Float.parseFloat(dropletStrX)/tileSize), int(Float.parseFloat(dropletStrY)/tileSize)));
+      }
+      
+      if (curWords.length > 1 && curWords[0].equals("sprite")){
+        //println("found sprite!");
+        String[] spriteStr = splitTokens(curWords[3], "()")[1].split(",");
+        
+        String spriteName = spriteStr[2].replace("Assets.", "");
+        //println(spriteName);
+        Sprite found = null;
+        for (Sprite s : spriteList){
+          //println(s.name);
+          if (spriteName.equals(s.name)){
+            found = s;
+            //println("found match");
+          }
+        }
+        
+        if (found != null){
+          sprites.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, false));
+          //println("yay!");
+        }
+      }
+      
+      if (curWords.length > 1 && curWords[0].equals("hideableObjects.push(new")){
+        //println("found hideable!");
+        String[] spriteStr = splitTokens(curWords[1], "()")[1].split(",");
+        
+        String spriteName = spriteStr[2].replace("Assets.", "");
+        //println(spriteName);
+        Sprite found = null;
+        for (Sprite s : spriteList){
+          //println(s.name);
+          if (spriteName.equals(s.name)){
+            found = s;
+            //println("found match");
+          }
+        }
+        
+        if (found != null){
+          sprites.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, true));
+          //println("yay!");
+        }
       }
       
       

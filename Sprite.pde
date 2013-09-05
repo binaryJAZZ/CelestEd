@@ -61,7 +61,17 @@ class Sprite{
     return false;
   }
   
-  String toString(){
-    return "" + name;
+  String toString(int tileSize, int tileShiftX, int tileShiftY, int indentDepth){
+    String indentString = "";
+    for (int i = 0; i < indentDepth; i++){
+      indentString += "\t";
+    }
+    
+    if (isHideable) {
+      return indentString + "hideableObjects.push(new HideableObject("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets."+name+"));\n";
+    }
+    else {
+      return indentString + "sprite = new FlxSprite("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets."+name+");\n";
+    }
   }
 }
