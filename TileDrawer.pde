@@ -127,4 +127,8 @@ class TileDrawer{
   String getSheetName(Tile t){
     return tilesheets.get(t.tilesheetIndex).name;
   }
+  
+  int getCurrentTileSize(){
+    return currentSheet.tileSize;
+  }
 }

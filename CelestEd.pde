@@ -28,7 +28,7 @@ int drawerColor = color(15,45,95); //dark blue
 int deleteColor = color(185,22,22); //dark red
 int altColor2 = color(0,0,0); //black
 int altColor3 = color(245,209,79,150); //transparent gold
-int dropletColor = color(162, 203, 255);
+int dropletColor = color(162, 203, 255); //light blue
 
 //grid
 int gridSize = 32; //the width & height of one square on the grid
@@ -43,9 +43,13 @@ TileMap[] tileMapList = {floors, foreground, walls};
 boolean isAddingTiles = false;
 boolean isDeletingTiles = false;
 
-//loading tilesheets
+//sprites
+ArrayList<Sprite> sprites = new ArrayList<Sprite>();
+
+//loading tilesheets and sprites
 String[] supportedFileTypes = {"png", "jpg", "gif"};
 ArrayList<Tilesheet> tilesheets = new ArrayList<Tilesheet>();
+ArrayList<Sprite> spriteList = new ArrayList<Sprite>();
 
 //level boundaries
 int topEdge, bottomEdge, leftEdge, rightEdge;
@@ -60,9 +64,10 @@ int selectedCorner = -1;
 Button hideOptions;
 ArrayList<Button> optionsButtons = new ArrayList<Button>();
 TileDrawer drawer;
+SpriteDrawer spriteDrawer;
 Button saveButton, openButton;
-Button toolSelector, layerSelector, enemyModeSelector;
-Button hideCollisionMap, hideLevelBounds, hideGrid, hideTextures, hideRooms, hideTileDrawer, hidePlayer, hideEnemies, hideWaypoints, hideFOV, hideDroplets;
+Button toolSelector, layerSelector, enemyModeSelector, hideableModeSelector;
+Button hideCollisionMap, hideLevelBounds, hideGrid, hideTextures, hideRooms, hideTileDrawer, hidePlayer, hideEnemies, hideWaypoints, hideFOV, hideDroplets, hideSpriteDrawer, hideSprites, hideHidingSpots;
 
 //player and enemies
 Player playerStart = new Player(0,0);
@@ -96,7 +101,11 @@ void setup(){
   
   loadTilesheets(sketchPath + "/tilesheets");
   
+  loadSprites(sketchPath + "/sprites");
+  
   drawer = new TileDrawer(0,int(WIN_Y*0.8),WIN_X,int(WIN_Y*0.2), 32, tilesheets);
+  
+  spriteDrawer = new SpriteDrawer(0,int(WIN_Y*0.8),WIN_X,int(WIN_Y*0.2), 32, spriteList);
   
   initButtons();
 }
@@ -126,6 +135,16 @@ void draw(){
   //level boundary
   if (!hideLevelBounds.isSelected()){
     drawLevelBoundary(altColor);
+  }
+  
+  //sprites
+  if (!hideSprites.isSelected()){
+    for (Sprite s : sprites) {
+      s.render();
+      if (!hideHidingSpots.isSelected() && s.isHideable){
+        s.renderHideability(floorColor);
+      }
+    }
   }
   
   //grid lines
@@ -261,6 +280,15 @@ void draw(){
     image(tilesheets.get(drawer.currentTilesheetIndex).tileImages[drawer.currentTileIndex], WIN_X - 64 - 2, 2, 64, 64);
   }
   
+  //current sprite
+  if (toolSelector.isSelected(5)){
+    stroke(lineColor);
+    fill(backgroundColor);
+    strokeWeight(4);
+    rect(WIN_X - 64 - 2, 2, 64, 64);
+    image(spriteDrawer.getSelectedSprite().img, WIN_X - 64 - 2, 2, 64, 64);
+  }
+  
   //UI
   saveButton.render();
   openButton.render();
@@ -271,6 +299,9 @@ void draw(){
   }
   else if (toolSelector.isSelected(3)){
     enemyModeSelector.render();
+  }
+  else if (toolSelector.isSelected(5)){
+    hideableModeSelector.render();
   }
   
   hideOptions.render();
@@ -285,11 +316,25 @@ void draw(){
     drawer.render(drawerColor, lineColor);
   }
   
+  //sprite 
+  if (!hideSpriteDrawer.isSelected()){
+    spriteDrawer.render(drawerColor, lineColor);
+  }
+  
   //drag screen around
   if (isDraggingScreen && mousePressed){
     camX += dragScreenX - getGridX();
     camY += dragScreenY - getGridY();
   }
+  
+  //debug sprites
+  /*
+  float sy = 0;
+  for (Sprite s : spriteList){
+    s.render(0, sy, 50, 50);
+    sy += 50;
+  }
+  */
 }
 
 void keyPressed(){
@@ -393,6 +438,9 @@ void mousePressed(){
     else if (toolSelector.isSelected(4)){
       editWaterDroplets();
     }
+    else if (toolSelector.isSelected(5)){
+      editSprites();
+    }     
   }
 }
 
@@ -527,9 +575,12 @@ void mouseReleased(){
 }
 
 boolean userInterface(){
-  boolean buttonPress = false;
+  boolean buttonPress = false;     
   
-  buttonPress = !hideTileDrawer.isSelected() && drawer.collision();
+  if ((!hideSpriteDrawer.isSelected() && spriteDrawer.collision()) 
+        || (!hideTileDrawer.isSelected() && drawer.collision())){
+    buttonPress = true;
+  }
   
   if (hideOptions.collision()){
     hideOptions.update();
@@ -567,6 +618,7 @@ boolean userInterface(){
       hideWaypoints.setIndex(1);
       
       hideDroplets.setIndex(1);
+      hideSpriteDrawer.setIndex(1);
     }
     else if (toolSelector.isSelected(1)){
       hideTileDrawer.setIndex(1);
@@ -592,6 +644,17 @@ boolean userInterface(){
     else if (toolSelector.isSelected(4)){
       hideDroplets.setIndex(0);
     }
+    else if (toolSelector.isSelected(5)){
+      hideSpriteDrawer.setIndex(0);
+      hideSprites.setIndex(0);
+      hideHidingSpots.setIndex(0);
+      hideTileDrawer.setIndex(1);
+      hideRooms.setIndex(1);
+      hidePlayer.setIndex(0);
+      hideEnemies.setIndex(0);
+      hideWaypoints.setIndex(1);
+      hideDroplets.setIndex(0);
+    }
   }
   
   if (toolSelector.isSelected(0) && layerSelector.collision()){
@@ -601,6 +664,11 @@ boolean userInterface(){
   
   if (toolSelector.isSelected(3) && enemyModeSelector.collision()){
     enemyModeSelector.update();
+    buttonPress = true;
+  }
+  
+  if (toolSelector.isSelected(5) && hideableModeSelector.collision()){
+    hideableModeSelector.update();
     buttonPress = true;
   }
   
@@ -679,6 +747,33 @@ int getScreenX(int gridX){
 
 int getScreenY(int gridY){
   return (-1*camY*gridSize) + (gridY*gridSize) + (WIN_Y/2 - gridSize/2);
+}
+
+float getScreenXf(float gridX){
+  //return (-1*camX*gridSize) + (gridX*gridSize) + (WIN_X/2 - gridSize/2);
+  return (-1*camX*gridSize) + (gridX*gridSize) + (WIN_X*0.5 - gridSize*0.5);
+}
+
+float getScreenYf(float gridY){
+  //return (-1*camY*gridSize) + (gridY*gridSize) + (WIN_Y/2 - gridSize/2);
+  return (-1*camY*gridSize) + (gridY*gridSize) + (WIN_Y*0.5 - gridSize*0.5);
+}
+
+void loadSprites(String spriteDirectoryPath){
+  File spriteDirectory = new File(spriteDirectoryPath);
+  
+  for (String fileName : spriteDirectory.list()){
+    String[] fileInfo = fileName.split("\\.");
+    if (fileInfo.length > 1){
+      String fileType = fileInfo[1];
+      
+      if (Arrays.asList(supportedFileTypes).contains(fileType.toLowerCase())){
+        //add sprite
+        println(fileInfo[0]);
+        spriteList.add(new Sprite(fileInfo[0], loadImage(spriteDirectoryPath + "/" + fileName)));
+      }  
+    }
+  }
 }
 
 void loadTilesheets(String tilesheetDirectoryPath){
@@ -1150,9 +1245,10 @@ void initButtons(){
   openButton = new Button(0,45,"Import From File");
   
   
-  toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)", "Switch tool (WATER DROPLETS)"});
+  toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)", "Switch tool (WATER DROPLETS)", "Switch tool (OBJECTS/SPRITES)"});
   layerSelector = new Button(0,90,new String[]{"Switch layer (FLOOR)","Switch layer (FOREGROUND)","Switch layer (WALL)"});
   enemyModeSelector = new Button(0,90,"Switch mode (ENEMY)","Switch mode (WAYPOINT)");
+  hideableModeSelector = new Button(0,90,"Switch hide mode (NORMAL)", "Switch hide mode (HIDEABLE)");
   
   hideOptions = new Button(0,120, "Hide Options", "Show Options");
   hideOptions.setIndex(1);
@@ -1197,6 +1293,16 @@ void initButtons(){
   hideDroplets = new Button(0,285,"Hide Droplets", "Show Droplets");
   optionsButtons.add(hideDroplets);
   hideDroplets.setIndex(1);
+  
+  hideSpriteDrawer = new Button(0,300,"Hide Sprite Drawer", "Show Sprite Drawer");
+  optionsButtons.add(hideSpriteDrawer);
+  hideSpriteDrawer.setIndex(1);
+  
+  hideSprites = new Button(0,315,"Hide Sprites", "Show Sprites");
+  optionsButtons.add(hideSprites);
+  
+  hideHidingSpots = new Button(0,330,"Hide Hiding Spots", "Show Hiding Spots");
+  optionsButtons.add(hideHidingSpots);
 }
 
 void renderRectOnGrid(int x1, int y1, int x2, int y2, int c1, int c2){
@@ -1272,5 +1378,24 @@ void editWaterDroplets(){
   }
   else {
     dropletList.remove(found);
+  }
+}
+
+void editSprites(){
+  Sprite found = null;
+  
+  for (Sprite s : sprites) {
+    if (s.collision()){
+      found = s;
+    }
+  }
+  
+  if (found == null){
+    float gridXf = (camX+0.5) + ((mouseX/float(gridSize)) - (WIN_X*0.5)/gridSize);
+    float gridYf = (camY+0.5) + ((mouseY/float(gridSize)) - (WIN_Y*0.5)/gridSize);
+    sprites.add(new Sprite(gridXf, gridYf, spriteDrawer.getSelectedSprite(), hideableModeSelector.isSelected()));
+  }
+  else {
+    sprites.remove(found);
   }
 }
