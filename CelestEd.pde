@@ -67,7 +67,9 @@ TileDrawer drawer;
 SpriteDrawer spriteDrawer;
 Button saveButton, openButton;
 Button toolSelector, layerSelector, enemyModeSelector, hideableModeSelector;
-Button hideCollisionMap, hideLevelBounds, hideGrid, hideTextures, hideRooms, hideTileDrawer, hidePlayer, hideEnemies, hideWaypoints, hideFOV, hideDroplets, hideSpriteDrawer, hideSprites, hideHidingSpots;
+Button hideCollisionMap, hideLevelBounds, hideGrid, hideTextures, hideRooms, hideTileDrawer, 
+       hidePlayer, hideEnemies, hideWaypoints, hideFOV, hideDroplets, hideSpriteDrawer, hideSprites, 
+       hideHidingSpots, hideSavePoints;
 
 //player and enemies
 Player playerStart = new Player(0,0);
@@ -76,6 +78,9 @@ Enemy selectedEnemy = null;
 
 //items
 ArrayList<WaterDroplet> dropletList = new ArrayList<WaterDroplet>();
+
+//save points
+ArrayList<SavePoint> savepointList = new ArrayList<SavePoint>();
 
 /*
 //Allows for holding 'p' and placing tiles
@@ -156,6 +161,13 @@ void draw(){
   if (!hideDroplets.isSelected()){
     for (WaterDroplet w : dropletList) {
       w.render(dropletColor);
+    }
+  }
+  
+  //save spots
+  if (!hideSavePoints.isSelected()){
+    for (SavePoint s : savepointList) {
+      s.render(altColor);
     }
   }
   
@@ -440,7 +452,10 @@ void mousePressed(){
     }
     else if (toolSelector.isSelected(5)){
       editSprites();
-    }     
+    }
+    else if (toolSelector.isSelected(6)){
+      editSavePoints();
+    }    
   }
 }
 
@@ -856,6 +871,14 @@ void saveMap(File fileOut){
     }
     output.print("\t\t}\n\n");
     
+    //function for creating save points
+    output.print("\t\toverride protected function savePointCreation():void{\n");
+    output.print("\t\t\tsuper.savePointCreation();\n");
+    for (SavePoint s : savepointList){
+      output.print(s.toString(tileSize, tileShiftX, tileShiftY, 3));
+    }
+    output.print("\t\t}\n\n");
+    
     //function for creating the map based on the arrays
     output.print("\t\toverride protected function createMap():void {\n\t\t\tvar tiles:FlxTilemap;\n\n");
     
@@ -917,7 +940,7 @@ void saveMap(File fileOut){
     output.print("\t\toverride protected function createGUI():void {\n\t\t\tsuper.createGUI();\n\t\t}\n\n");
     
     //function to add water droplets
-    output.print("\t\toverride protected function createWaterDroplets():void {\n\t\t\tvar waterDrop:FlxSprite;\n\t\t\twaterDrops = new FlxGroup();\n\n");
+    output.print("\t\toverride protected function createWaterDroplets():void {\n\t\t\tvar waterDrop:FlxSprite;\n\t\t\twaterDrops = new Vector.<FlxSprite>();\n\n");
     for (WaterDroplet w : dropletList) {
       output.print(w.toString(tileSize, tileShiftX, tileShiftY, 3));
     }
@@ -939,9 +962,11 @@ void saveMap(File fileOut){
     output.print("\t\t\tadd(floorGroup);\n");
     output.print("\t\t\tadd(wallGroup);\n");
     output.print("\t\t\tvar i: int;\n\t\t\tif(hideableObjects!=null)\n\t\t\t{\n\t\t\t\tfor(i =0; i<hideableObjects.length; i++)\n\t\t\t\t{\n\t\t\t\t\tadd(hideableObjects[i]);\n\t\t\t\t}\n\t\t\t}\n");
-    output.print("\t\t\tadd(decalGroup);\n");
-    output.print("\t\t\tadd(waterDrops);\n");
+    output.print("\t\t\tif(savePoints!=null)\t\t\t{\n\t\t\t\tfor(i =0; i<savePoints.length; i++)\n\t\t\t\t{\n\t\t\t\t\tadd(savePoints[i]);\n\t\t\t\t}\n\t\t\t}\n");
     output.print("\t\t\tadd(objectGroup);\n");
+    output.print("\t\t\tadd(decalGroup);\n");
+    //output.print("\t\t\tadd(waterDrops);\n");
+    output.print("\t\t\tif(waterDrops!=null)\t\t\t{\n\t\t\t\tfor(i = 0; i<waterDrops.length; i++)\n\t\t\t\t{\n\t\t\t\t\tadd(waterDrops[i]);\n\t\t\t\t}\n\t\t\t}\n");
     output.print("\t\t\tadd(player);\n");
     output.print("\t\t\tplayer.addSprites(this);\n");
     output.print("\t\t\tadd(enemyController);\n");
@@ -1007,6 +1032,7 @@ void loadMap(File fileIn){
     ArrayList<Enemy> newEnemyList = new ArrayList<Enemy>();
     ArrayList<Waypoint> waypointList = new ArrayList<Waypoint>();
     ArrayList<WaterDroplet> newDropletList = new ArrayList<WaterDroplet>();
+    ArrayList<SavePoint> newSavepointList = new ArrayList<SavePoint>();
     
     //String mapFileStr = "";
     for (String curLine : loadStrings(fileIn.getAbsolutePath())){
@@ -1044,6 +1070,13 @@ void loadMap(File fileIn){
         //println(dropletStrX);
         //println(dropletStrY);
         newDropletList.add(new WaterDroplet(int(Float.parseFloat(dropletStrX)/tileSize), int(Float.parseFloat(dropletStrY)/tileSize)));
+      }
+      
+      if (curWords.length > 1 && curWords[0].equals("savePoints.push(new")){
+        print("savepoint!");
+        String savepointStrX = splitTokens(curWords[1], "(")[1].replace(",",""); 
+        String savepointStrY = curWords[2].replace("));",""); 
+        newSavepointList.add(new SavePoint(int(Float.parseFloat(savepointStrX)/tileSize), int(Float.parseFloat(savepointStrY)/tileSize)));
       }
       
       if (curWords.length > 1 && curWords[0].equals("sprite")){
@@ -1182,6 +1215,7 @@ void loadMap(File fileIn){
     roomList = newRoomList;
     enemyList = newEnemyList;
     dropletList = newDropletList;
+    savepointList = newSavepointList;
     selectedEnemy = null;
   }
   catch(Exception e){
@@ -1300,7 +1334,7 @@ void initButtons(){
   openButton = new Button(0,45,"Import From File");
   
   
-  toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)", "Switch tool (WATER DROPLETS)", "Switch tool (OBJECTS/SPRITES)"});
+  toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)", "Switch tool (WATER DROPLETS)", "Switch tool (OBJECTS/SPRITES)","Switch tool (SAVE POINTS)"});
   layerSelector = new Button(0,90,new String[]{"Switch layer (FLOOR)","Switch layer (FOREGROUND)","Switch layer (WALL)"});
   enemyModeSelector = new Button(0,90,"Switch mode (ENEMY)","Switch mode (WAYPOINT)");
   hideableModeSelector = new Button(0,90,"Switch hide mode (NORMAL)", "Switch hide mode (HIDEABLE)");
@@ -1358,6 +1392,9 @@ void initButtons(){
   
   hideHidingSpots = new Button(0,330,"Hide Hiding Spots", "Show Hiding Spots");
   optionsButtons.add(hideHidingSpots);
+  
+  hideSavePoints = new Button(0,345,"Hide Save Spots", "Show Save Spots");
+  optionsButtons.add(hideSavePoints);
 }
 
 void renderRectOnGrid(int x1, int y1, int x2, int y2, int c1, int c2){
@@ -1433,6 +1470,22 @@ void editWaterDroplets(){
   }
   else {
     dropletList.remove(found);
+  }
+}
+
+void editSavePoints(){
+  SavePoint found = null;
+  for (SavePoint s : savepointList) {
+    if (s.x == getGridX() && s.y == getGridY()) {
+      found = s;
+    }
+  }
+  
+  if (found == null){
+    savepointList.add(new SavePoint(getGridX(), getGridY()));
+  }
+  else {
+    savepointList.remove(found);
   }
 }
 

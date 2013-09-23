@@ -1,7 +1,7 @@
-class WaterDroplet{
+class SavePoint{
   int x, y; //location on the grid
   
-  WaterDroplet(int x, int y){
+  SavePoint(int x, int y){
     this.x = x;
     this.y = y;
   }
@@ -9,10 +9,10 @@ class WaterDroplet{
   void render(int c1, int c2){
     noStroke();
     fill(c1);
-    ellipse(getScreenX(x)+gridSize*0.5, getScreenY(y)+gridSize*0.5, gridSize*0.5, gridSize*0.5);
+    ellipse(getScreenX(x)+gridSize*0.5, getScreenY(y)+gridSize*0.5, gridSize, gridSize);
     
     fill(c2);
-    text("Droplet",getScreenX(x),getScreenY(y)-15);
+    text("Save Point",getScreenX(x),getScreenY(y)-15);
   }
   
   void render(int c){
@@ -26,8 +26,7 @@ class WaterDroplet{
     }
     
     String str = "";
-    str += indentString + "waterDrop = new FlxSprite("+(tileSize*(float(tileShiftX + x)+0.5))+", "+(tileSize*(float(tileShiftY + y)+0.5))+", Assets.WATER_DROP);\n";
-    str += indentString + "waterDrops.push(waterDrop);\n\n";
+    str += indentString + "savePoints.push(new SavePoint("+(tileSize*(float(tileShiftX + x)+0.5))+", "+(tileSize*(float(tileShiftY + y)+0.5))+"));\n";
     
     return str;
   }
