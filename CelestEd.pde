@@ -5,7 +5,7 @@
 //****************************************************
 
 //imports
-import java.util.HashMap;
+import java.util.*;
 
 //camera
 int camX = 0; //where is camera located? (the center square of the grid)
