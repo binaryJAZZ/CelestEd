@@ -122,8 +122,8 @@ void draw(){
   //all tiles
   if (!hideTextures.isSelected()){
     floors.render();
-    foreground.render();
     walls.render();
+    foreground.render();
   }
   if (!hideCollisionMap.isSelected()){
     floors.render(floorColor);
@@ -1033,6 +1033,7 @@ void loadMap(File fileIn){
     ArrayList<Waypoint> waypointList = new ArrayList<Waypoint>();
     ArrayList<WaterDroplet> newDropletList = new ArrayList<WaterDroplet>();
     ArrayList<SavePoint> newSavepointList = new ArrayList<SavePoint>();
+    ArrayList<Sprite> newSpriteList = new ArrayList<Sprite>();
     
     //String mapFileStr = "";
     for (String curLine : loadStrings(fileIn.getAbsolutePath())){
@@ -1095,7 +1096,7 @@ void loadMap(File fileIn){
         }
         
         if (found != null){
-          sprites.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, false));
+          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, false));
           //println("yay!");
         }
       }
@@ -1116,7 +1117,7 @@ void loadMap(File fileIn){
         }
         
         if (found != null){
-          sprites.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, true));
+          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, true));
           //println("yay!");
         }
       }
@@ -1216,6 +1217,7 @@ void loadMap(File fileIn){
     enemyList = newEnemyList;
     dropletList = newDropletList;
     savepointList = newSavepointList;
+    sprites = newSpriteList;
     selectedEnemy = null;
   }
   catch(Exception e){
