@@ -5,7 +5,7 @@
 //****************************************************
 
 //imports
-import java.util.*;
+import java.util.HashMap;
 
 //camera
 int camX = 0; //where is camera located? (the center square of the grid)
@@ -96,6 +96,9 @@ int massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY;
 
 //copy and paste
 int[][] copiedTileIndexes;
+
+//safezone
+String safezoneCode = ""; 
 
 void setup(){
   size(WIN_X, WIN_Y);
@@ -859,6 +862,9 @@ void saveMap(File fileOut){
     output.print("\t\tpublic function "+className+"(levelSize:FlxPoint, blockSize:FlxPoint):void {\n");
     output.print("\t\t\tsuper(levelSize, blockSize, new FlxPoint("+((tileShiftX+float(playerStart.x)+0.5)*tileSize)+","+((tileShiftY+float(playerStart.y)+0.5)*tileSize)+"));\n");
     output.print("\t\t\tlegOutfit = new PlayerOutfit(72*7,55*16,Assets.RANGER2_PANTS,PlayerOutfit.LEGS_OUTFIT,Assets.RANGER2LEGS_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(legOutfit);\n\t\t\tbodyOutfit = new PlayerOutfit(42*16,49*16,Assets.RANGER2_SHIRT,PlayerOutfit.BODY_OUTFIT,Assets.RANGER2BODY_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(bodyOutfit);\n\t\t\theadOutfit = new PlayerOutfit(72*16,55*16,Assets.RANGER2_HAT,PlayerOutfit.HEAD_OUTFIT,Assets.RANGER2HEAD_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(headOutfit);\n");
+    output.print("\t\t\t//SAFEZONE\n");
+    output.print(safezoneCode);
+    output.print("\t\t\t//SAFEZONE\n");
     output.print("\t\t}\n\n");
     
     //function for hideable objects
@@ -893,7 +899,7 @@ void saveMap(File fileOut){
     output.print("\t\t\twallGroup.add(tiles);\n\n");
     
     //NOTE 2
-    output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n\t\t\t\tFlxTilemap.arrayToCSV(FOREGROUND, 81),\n\t\t\t\tAssets.WALLS_TILE, tileSize.x, tileSize.y\n\t\t\t);\n\t\t\tforeGroundGroup.add(tiles);\n");
+    output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n\t\t\t\tFlxTilemap.arrayToCSV(FOREGROUND, "+levelWidth+"),\n\t\t\t\tAssets.WALLS_TILE, tileSize.x, tileSize.y\n\t\t\t);\n\t\t\tforeGroundGroup.add(tiles);\n");
     
     output.print("\t\t\tdarkness = new FlxSprite(0,0);\n\t\t\tdarkness.makeGraphic(FlxG.width, FlxG.height, 0xff000000);\n");
     output.print("\t\t\tdarkness.scrollFactor.x = darkness.scrollFactor.y = 0;\n\t\t\tdarkness.blend = \"multiply\";\n");
@@ -1034,6 +1040,8 @@ void loadMap(File fileIn){
     ArrayList<WaterDroplet> newDropletList = new ArrayList<WaterDroplet>();
     ArrayList<SavePoint> newSavepointList = new ArrayList<SavePoint>();
     ArrayList<Sprite> newSpriteList = new ArrayList<Sprite>();
+    boolean readingSafeZone = false;
+    String newSafeZoneCode = "";
     
     //String mapFileStr = "";
     for (String curLine : loadStrings(fileIn.getAbsolutePath())){
@@ -1042,6 +1050,14 @@ void loadMap(File fileIn){
       
       //println(curWords.length);
       //println(curWords[0]);
+      
+      //save safezone code
+      if (curWords[0].equals("//SAFEZONE")){
+        readingSafeZone = !readingSafeZone;
+      }
+      else if (readingSafeZone){
+        newSafeZoneCode += curLine + "\n";
+      }
       
       if (curWords.length > 3 && curWords[2].equals("tilesize:")){
         tileSize = Integer.parseInt(curWords[3]);
@@ -1219,6 +1235,7 @@ void loadMap(File fileIn){
     savepointList = newSavepointList;
     sprites = newSpriteList;
     selectedEnemy = null;
+    safezoneCode = newSafeZoneCode;
   }
   catch(Exception e){
     println("can't load the map... dang");
