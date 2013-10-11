@@ -29,6 +29,7 @@ int deleteColor = color(185,22,22); //dark red
 int altColor2 = color(0,0,0); //black
 int altColor3 = color(245,209,79,150); //transparent gold
 int dropletColor = color(162, 203, 255); //light blue
+int timelimitColor = color(185,22,22,100); //transparent red
 
 //grid
 int gridSize = 32; //the width & height of one square on the grid
@@ -150,7 +151,12 @@ void draw(){
     for (Sprite s : sprites) {
       s.render();
       if (!hideHidingSpots.isSelected() && s.isHideable){
-        s.renderHideability(floorColor);
+        if (s.hasHidingTimeLimit){
+          s.renderHideability(timelimitColor);
+        }
+        else{
+          s.renderHideability(floorColor);
+        }
       }
     }
   }
@@ -519,7 +525,7 @@ void editRooms(){
 }
 
 void editEnemies(){
-  if (enemyModeSelector.isSelected(0)){
+  if (enemyModeSelector.getIndex() < 3){
     //add, select, remove enemies
     Enemy existingEnemy = null;
     for (Enemy e : enemyList){
@@ -529,7 +535,7 @@ void editEnemies(){
     }
     
     if (existingEnemy == null){
-      selectedEnemy = new Enemy(getGridX(), getGridY());
+      selectedEnemy = new Enemy(getGridX(), getGridY(), enemyModeSelector.getIndex());
       enemyList.add(selectedEnemy);
     }
     else if (existingEnemy == selectedEnemy){
@@ -540,7 +546,7 @@ void editEnemies(){
       selectedEnemy = existingEnemy;
     }
   }
-  else if (enemyModeSelector.isSelected(1)){
+  else{
     //add and remove waypoints
     if (selectedEnemy != null){
       if (!(getGridX() == selectedEnemy.x && getGridY() == selectedEnemy.y)){ //you can't get rid of the initial waypoint
@@ -890,16 +896,16 @@ void saveMap(File fileOut){
     
     output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n");
     output.print("\t\t\t\tFlxTilemap.arrayToCSV(FLOORS, "+levelWidth+"),\n");
-    output.print("\t\t\t\tAssets.FLOORS_TILE, tileSize.x, tileSize.y, 0, 0, 0, uint.MAX_VALUE\n\t\t\t);\n");
+    output.print("\t\t\t\tAssets."+floors.tilesheetName()+", tileSize.x, tileSize.y, 0, 0, 0, uint.MAX_VALUE\n\t\t\t);\n");
     output.print("\t\t\tfloorGroup.add(tiles);\n\n");
     
     output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n");
     output.print("\t\t\t\tFlxTilemap.arrayToCSV(WALLS, "+levelWidth+"),\n");
-    output.print("\t\t\t\tAssets.WALLS_TILE, tileSize.x, tileSize.y\n\t\t\t);\n");
+    output.print("\t\t\t\tAssets."+walls.tilesheetName()+", tileSize.x, tileSize.y\n\t\t\t);\n");
     output.print("\t\t\twallGroup.add(tiles);\n\n");
     
     //NOTE 2
-    output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n\t\t\t\tFlxTilemap.arrayToCSV(FOREGROUND, "+levelWidth+"),\n\t\t\t\tAssets.WALLS_TILE, tileSize.x, tileSize.y\n\t\t\t);\n\t\t\tforeGroundGroup.add(tiles);\n");
+    output.print("\t\t\ttiles = new FlxTilemap();\n\t\t\ttiles.loadMap(\n\t\t\t\tFlxTilemap.arrayToCSV(FOREGROUND, "+levelWidth+"),\n\t\t\t\tAssets."+foreground.tilesheetName()+", tileSize.x, tileSize.y\n\t\t\t);\n\t\t\tforeGroundGroup.add(tiles);\n");
     
     output.print("\t\t\tdarkness = new FlxSprite(0,0);\n\t\t\tdarkness.makeGraphic(FlxG.width, FlxG.height, 0xff000000);\n");
     output.print("\t\t\tdarkness.scrollFactor.x = darkness.scrollFactor.y = 0;\n\t\t\tdarkness.blend = \"multiply\";\n");
@@ -956,7 +962,8 @@ void saveMap(File fileOut){
     output.print("\t\toverride protected function addEnemies(): void {\n");
     output.print("\n");
     output.print("\t\t\tvar enemies:Vector.<Enemy> = new Vector.<Enemy>();\n");
-    output.print("\t\t\tvar enemyLight:Light;\n");    
+    output.print("\t\t\tvar enemyLight:Light;\n"); 
+    output.print("\t\t\tvar enemyLight2:Light;\n");
     for (Enemy e : enemyList){
       output.print(e.toString(tileSize, tileShiftX, tileShiftY, 3));
     }
@@ -976,6 +983,7 @@ void saveMap(File fileOut){
     output.print("\t\t\tadd(player);\n");
     output.print("\t\t\tplayer.addSprites(this);\n");
     output.print("\t\t\tadd(enemyController);\n");
+    output.print("\t\t\tadd(foreGroundGroup);\n");
     output.print("\t\t\tadd(playerLight);\n");
     output.print("\t\t\tadd(darkness);\n");
     output.print("\t\t\tadd(guiGroup);\n");
@@ -1042,6 +1050,7 @@ void loadMap(File fileIn){
     ArrayList<Sprite> newSpriteList = new ArrayList<Sprite>();
     boolean readingSafeZone = false;
     String newSafeZoneCode = "";
+    int curEnemyType = 0;
     
     //String mapFileStr = "";
     for (String curLine : loadStrings(fileIn.getAbsolutePath())){
@@ -1112,7 +1121,7 @@ void loadMap(File fileIn){
         }
         
         if (found != null){
-          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, false));
+          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, false, false));
           //println("yay!");
         }
       }
@@ -1133,15 +1142,30 @@ void loadMap(File fileIn){
         }
         
         if (found != null){
-          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, true));
+          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, true, spriteStr.length>4));
           //println("yay!");
         }
       }
       
       
+      if (curWords.length > 4 && curWords[1].contains(":Enemy")){
+        println("hello");
+        String et = curWords[4];
+        println(et);
+        if (et.contains("Enemy(Assets.GUARD_SPRITE")){
+          curEnemyType = 0;
+        }
+        else if (et.contains("CookEnemy")){
+          curEnemyType= 1;
+        }
+        else if (et.contains("LadyEnemy")){
+          curEnemyType = 2;
+        }
+      }
+      
       if (curWords.length > 0 && curWords[0].split("\\(")[0].equals("enemies.push")){
         //found an enemy!
-        Enemy newEnemy = new Enemy(waypointList.get(0).x, waypointList.get(0).y);
+        Enemy newEnemy = new Enemy(waypointList.get(0).x, waypointList.get(0).y, curEnemyType);
         
         for (int i = 1; i < waypointList.size(); i++){
           newEnemy.addWaypoint(waypointList.get(i).x, waypointList.get(i).y);
@@ -1355,8 +1379,8 @@ void initButtons(){
   
   toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)", "Switch tool (WATER DROPLETS)", "Switch tool (OBJECTS/SPRITES)","Switch tool (SAVE POINTS)"});
   layerSelector = new Button(0,90,new String[]{"Switch layer (FLOOR)","Switch layer (FOREGROUND)","Switch layer (WALL)"});
-  enemyModeSelector = new Button(0,90,"Switch mode (ENEMY)","Switch mode (WAYPOINT)");
-  hideableModeSelector = new Button(0,90,"Switch hide mode (NORMAL)", "Switch hide mode (HIDEABLE)");
+  enemyModeSelector = new Button(0,90,new String[]{"Switch mode (CAT GUARD)","Switch mode (RAT COOK)","Switch mode (SHARK LADY)","Switch mode (WAYPOINT)"});
+  hideableModeSelector = new Button(0,90,new String[]{"Switch hide mode (NORMAL)", "Switch hide mode (HIDEABLE)", "Switch hide mode (HIDEABLE w/ TIME LIMIT)"});
   
   hideOptions = new Button(0,120, "Hide Options", "Show Options");
   hideOptions.setIndex(1);
@@ -1520,7 +1544,7 @@ void editSprites(){
   if (found == null){
     float gridXf = (camX+0.5) + ((mouseX/float(gridSize)) - (WIN_X*0.5)/gridSize);
     float gridYf = (camY+0.5) + ((mouseY/float(gridSize)) - (WIN_Y*0.5)/gridSize);
-    sprites.add(new Sprite(gridXf, gridYf, spriteDrawer.getSelectedSprite(), hideableModeSelector.isSelected()));
+    sprites.add(new Sprite(gridXf, gridYf, spriteDrawer.getSelectedSprite(), hideableModeSelector.getIndex()>0, hideableModeSelector.getIndex()>1));
   }
   else {
     sprites.remove(found);

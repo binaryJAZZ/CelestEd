@@ -4,8 +4,9 @@ class Sprite{
   PImage img;
   float x, y; //location relative to the grid
   boolean isHideable; //can the player hide inside this sprite object?
+  boolean hasHidingTimeLimit = false;
   
-  Sprite(float x, float y, String name, PImage img, boolean isHideable){
+  Sprite(float x, float y, String name, PImage img, boolean isHideable, boolean hasHidingTimeLimit){
     this.x = x;
     this.y = y;
     
@@ -14,18 +15,20 @@ class Sprite{
     this.img = img;
     
     this.isHideable = isHideable;
+    
+    this.hasHidingTimeLimit = hasHidingTimeLimit;
   }
   
   Sprite(String name, PImage img){
-    this(0.0, 0.0, name, img, false);
+    this(0.0, 0.0, name, img, false, false);
   }
   
   Sprite(float x, float y, Sprite original){
-    this(x, y, original.name, original.img, false);
+    this(x, y, original.name, original.img, false, false);
   }
   
-  Sprite(float x, float y, Sprite original, boolean isHideable){
-    this(x, y, original.name, original.img, isHideable);
+  Sprite(float x, float y, Sprite original, boolean isHideable, boolean hasHidingTimeLimit){
+    this(x, y, original.name, original.img, isHideable, hasHidingTimeLimit);
   }
   
   //render at arbitrary location, with arbitrary size
@@ -68,7 +71,12 @@ class Sprite{
     }
     
     if (isHideable) {
-      return indentString + "hideableObjects.push(new HideableObject("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets."+name+"));\n";
+      if (hasHidingTimeLimit){
+        return indentString + "hideableObjects.push(new HideableObject("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets."+name+",true,0.5));\n";
+      }
+      else{
+        return indentString + "hideableObjects.push(new HideableObject("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets."+name+"));\n";
+      }
     }
     else {
       return indentString + "sprite = new FlxSprite("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets."+name+");\n";

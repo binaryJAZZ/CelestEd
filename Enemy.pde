@@ -1,13 +1,18 @@
 int enemyCounter = 0;
+String[] enemyTypeNames = {"CAT","RAT","SHARK"};
+String[] enemyConstructors = {"Enemy(Assets.GUARD_SPRITE, ", "CookEnemy(","LadyEnemy("};
+String[] enemyLights = {"enemyLight, ", "enemyLight, ", "enemyLight,enemyLight2, "};
 
 class Enemy{
   int x, y; //location on the grid
   ArrayList<Waypoint> waypoints = new ArrayList<Waypoint>();
   int ID;
+  int type;
   
-  Enemy(int x, int y){
+  Enemy(int x, int y, int type){
     this.x = x;
     this.y = y;
+    this.type = type;
     this.waypoints.add(new Waypoint(x,y)); //first waypoint is at its starting position
     
     this.ID = enemyCounter;
@@ -20,7 +25,7 @@ class Enemy{
     rect(getScreenX(x),getScreenY(y),gridSize,gridSize);
     
     fill(c2);
-    text("Enemy",getScreenX(x),getScreenY(y)-15);
+    text(enemyTypeNames[type],getScreenX(x),getScreenY(y)-15);
   }
   
   void render(int c){
@@ -122,9 +127,16 @@ class Enemy{
     enemyString += "\n";
     
     //NOTE 4
-    enemyString += indentString + "enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);\n\n";
+    if (type < 2){
+      enemyString += indentString + "enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);\n\n";
+    }
+    else{
+      enemyString += indentString + "enemyLight = new Light(Assets.SharkLightImage, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);\n";
+      enemyString += indentString + "enemyLight2 = new Light(Assets.SharkLightImage, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF);  add(enemyLight2);\n\n";
+    }
     
-    enemyString += indentString + "var enemy" + ID + ":Enemy = new Enemy(waypointList" + ID + ", player, enemyLight, " + (float(tileShiftX + x)*tileSize) + ", " + (float(tileShiftY + y)*tileSize) + "); \n";
+    enemyString += indentString + "var enemy" + ID + ":Enemy = new " + enemyConstructors[type] + "waypointList" + ID + ", player, " + enemyLights[type] + (float(tileShiftX + x)*tileSize) + ", " + (float(tileShiftY + y)*tileSize) + "); \n";
+    
     enemyString += indentString + "enemies.push(enemy" + ID + "); \n\n";
     
     return enemyString;

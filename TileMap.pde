@@ -83,6 +83,10 @@ class TileMap{
     return tileList.size();
   }
   
+  String tilesheetName(){
+    return drawer.getSheetName(tileList.get(0));
+  }
+  
   String stringExport(int startX, int startY, int endX, int endY){ //return this tile map in text form (to be outputted in a level file)
     String newLine = "\n";
     String baseIndent = "\t\t";
