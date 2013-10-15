@@ -386,7 +386,7 @@ void keyPressed(){
   if (key == 'e' && isMassSelecting) massEraseTiles();
   
   if (key == 'c' && isMassSelecting) copyTiles(massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY);
-  if (key == 'v' && isMassSelecting) pasteTiles(massSelectLeftX, massSelectTopY);
+  if (key == 'v' && isMassSelecting) pasteTiles(getGridX(), getGridY());
 }
 
 void keyReleased(){
