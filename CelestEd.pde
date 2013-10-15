@@ -98,8 +98,9 @@ int massSelectLeftX, massSelectTopY, massSelectRightX, massSelectBottomY;
 //copy and paste
 int[][] copiedTileIndexes;
 
-//safezone
+//SAFEZONEs
 String safezoneCode = ""; 
+String safezone2Code = "";
 
 void setup(){
   size(WIN_X, WIN_Y);
@@ -873,6 +874,11 @@ void saveMap(File fileOut){
     output.print("\t\t\t//SAFEZONE\n");
     output.print("\t\t}\n\n");
     
+    //SAFEZONE2
+    output.print("\t\t//SAFEZONE2\n");
+    output.print(safezone2Code);
+    output.print("\t\t//SAFEZONE2\n\n");
+    
     //function for hideable objects
     output.print("\t\toverride protected function addHideableObjects():void {\n");
     output.print("\t\t\tsuper.addHideableObjects();\n");
@@ -1048,8 +1054,10 @@ void loadMap(File fileIn){
     ArrayList<WaterDroplet> newDropletList = new ArrayList<WaterDroplet>();
     ArrayList<SavePoint> newSavepointList = new ArrayList<SavePoint>();
     ArrayList<Sprite> newSpriteList = new ArrayList<Sprite>();
-    boolean readingSafeZone = false;
-    String newSafeZoneCode = "";
+    boolean readingSafezone = false;
+    String newSafezoneCode = "";
+    boolean readingSafezone2 = false;
+    String newSafezone2Code = "";
     int curEnemyType = 0;
     
     //String mapFileStr = "";
@@ -1062,10 +1070,18 @@ void loadMap(File fileIn){
       
       //save safezone code
       if (curWords[0].equals("//SAFEZONE")){
-        readingSafeZone = !readingSafeZone;
+        readingSafezone = !readingSafezone;
       }
-      else if (readingSafeZone){
-        newSafeZoneCode += curLine + "\n";
+      else if (readingSafezone){
+        newSafezoneCode += curLine + "\n";
+      }
+      
+      //save safezone2 code
+      if (curWords[0].equals("//SAFEZONE2")){
+        readingSafezone2 = !readingSafezone2;
+      }
+      else if (readingSafezone2){
+        newSafezone2Code += curLine + "\n";
       }
       
       if (curWords.length > 3 && curWords[2].equals("tilesize:")){
@@ -1259,7 +1275,8 @@ void loadMap(File fileIn){
     savepointList = newSavepointList;
     sprites = newSpriteList;
     selectedEnemy = null;
-    safezoneCode = newSafeZoneCode;
+    safezoneCode = newSafezoneCode;
+    safezone2Code = newSafezone2Code;
   }
   catch(Exception e){
     println("can't load the map... dang");
