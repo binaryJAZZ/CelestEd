@@ -6,8 +6,15 @@ class TileMap{
   ArrayList<Tile> tileList = new ArrayList<Tile>();
   HashMap<Integer, HashMap> tileMap = new HashMap<Integer, HashMap>();
   
-  TileMap(String name){
+  int defaultTileSheet;
+  
+  TileMap(String name, int defaultTileSheet){
     this.name = name;
+    this.defaultTileSheet = defaultTileSheet;
+  }
+  
+  TileMap(String name){
+    this(name, 1);
   }
   
   boolean addTile(Integer x, Integer y, int tilesheetIndex, int tileIndex){ //add a new tile (returns true if successful)
@@ -84,7 +91,10 @@ class TileMap{
   }
   
   String tilesheetName(){
-    return drawer.getSheetName(tileList.get(0));
+    if (tileList.size() > 0){
+      return drawer.getSheetName(tileList.get(0));
+    }
+    return drawer.tilesheets.get(defaultTileSheet).name; //janky-ass default option
   }
   
   String stringExport(int startX, int startY, int endX, int endY){ //return this tile map in text form (to be outputted in a level file)
@@ -93,7 +103,19 @@ class TileMap{
     
     String s = baseIndent + "/** " + newLine;
     s += baseIndent + " * " + name + " layer " + newLine;
-    s += baseIndent + " * tilesheet: " + drawer.getSheetName(tileList.get(0)) + " " + newLine;
+    
+    s += baseIndent + " * tilesheet: " + tilesheetName() + " " + newLine;
+    
+    /*
+    if (tileList.size() > 0){
+      s += baseIndent + " * tilesheet: " + drawer.getSheetName(tileList.get(0)) + " " + newLine;
+    }
+    else{
+      //janky default
+      s += baseIndent + " * tilesheet: " + drawer.tilesheets.get(0).name + " " + newLine;
+    }
+    */
+    
     s += baseIndent + " */ " + newLine;
     s += baseIndent + "protected static var " + name + ":Array = new Array( " + newLine;
     
@@ -148,7 +170,11 @@ class TileMap{
         
         try{
           //println("Add title");
-          addTile(new Integer(x), new Integer(y), tilesheetIndex, Integer.parseInt(tileStr));
+          boolean isIgnoreable = tileStr.equals("0") && (name.equals("FOREGROUND") || name.equals("WALLS"));
+          //println("ignore " + isIgnoreable);
+          if (!isIgnoreable){
+            addTile(new Integer(x), new Integer(y), tilesheetIndex, Integer.parseInt(tileStr));
+          }
         }
         catch(Exception e){
           println("not a valid int conversion");

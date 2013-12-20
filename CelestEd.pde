@@ -6,6 +6,7 @@
 
 //imports
 import java.util.HashMap;
+import java.util.Arrays;
 
 //camera
 int camX = 0; //where is camera located? (the center square of the grid)
@@ -37,7 +38,7 @@ int minGridSize = 8;
 int maxGridSize = 128;
 
 //tiles
-TileMap floors = new TileMap("FLOORS");
+TileMap floors = new TileMap("FLOORS", 0);
 TileMap foreground = new TileMap("FOREGROUND");
 TileMap walls = new TileMap("WALLS");
 TileMap[] tileMapList = {floors, foreground, walls};
@@ -832,9 +833,24 @@ void saveMap(File fileOut){
     
     //WRITE LEVEL DATA
     String className = fileOut.getName().replace(".as","");
-    int tileSize = tilesheets.get(floors.tileList.get(0).tilesheetIndex).tileSize;
+    int tileSize = 16; //default
+    if (floors.tileList.size() > 0){
+      tileSize = tilesheets.get(floors.tileList.get(0).tilesheetIndex).tileSize;
+    }
     int levelWidth = rightEdge-leftEdge+1;
     int levelHeight = bottomEdge-topEdge+1;
+    
+    //now we fix the level width if it's below a minimum
+    int minLevelSize = 68; //somewhat arbitrary (just needs to be BIG ENOUGH)
+    if (levelWidth < minLevelSize){
+      rightEdge += (minLevelSize - levelWidth);
+      levelWidth = minLevelSize;
+    }
+    if (levelHeight < minLevelSize){
+      bottomEdge += (minLevelSize - levelHeight);
+      levelHeight = minLevelSize;
+    }
+    
     //the distance from the top left corner to the (0,0) point
     int tileShiftX = -1 * leftEdge;
     int tileShiftY = -1 * topEdge;
@@ -1004,6 +1020,9 @@ void saveMap(File fileOut){
     //NOTE 6
     output.print("\t\toverride public function transferLevel(): TopDownLevel{\n\t\t\tif(super.reloadThisLevel)\n\t\t\t{\n\t\t\t\treturn " + initCode + "\n\t\t\t}\n\t\t\telse\n\t\t\t{\n\t\t\t\treturn null;\n\t\t\t}\n\t\t}\n\n");
     
+    //load information function
+    output.print("\t\toverride protected function loadInformation(): void\t\t{\n\t\t\tsuper.loadInformation();\n\t\t}\n\n");
+    
     //update function
     output.print("\t\toverride public function update():void {\n\t\t\tsuper.update();\n\t\t}\n\n");
     
@@ -1038,6 +1057,7 @@ void saveMap(File fileOut){
   }
   catch(Exception e){
     println("cannot save this map... that sucks");
+    println(e.getStackTrace());
   }
 }
 
