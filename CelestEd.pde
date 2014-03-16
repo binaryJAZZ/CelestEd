@@ -5,7 +5,7 @@
 //****************************************************
 
 //imports
-import java.util.HashMap;
+import java.util.*;
 
 //camera
 int camX = 0; //where is camera located? (the center square of the grid)
@@ -856,7 +856,7 @@ void saveMap(File fileOut){
     
     //initialize variables
     output.print("\t\tprotected var decalGroup:FlxGroup;\n");
-    output.print("\t\tprotected var objectGroup:FlxGroup;\n\n");
+    //output.print("\t\tprotected var objectGroup:FlxGroup;\n\n");
     
     /*
     output.print("\t\tprivate var darkness:FlxSprite;\n");
@@ -868,7 +868,7 @@ void saveMap(File fileOut){
     //the constructor
     output.print("\t\tpublic function "+className+"(levelSize:FlxPoint, blockSize:FlxPoint):void {\n");
     output.print("\t\t\tsuper(levelSize, blockSize, new FlxPoint("+((tileShiftX+float(playerStart.x)+0.5)*tileSize)+","+((tileShiftY+float(playerStart.y)+0.5)*tileSize)+"));\n");
-    output.print("\t\t\tlegOutfit = new PlayerOutfit(72*7,55*16,Assets.RANGER2_PANTS,PlayerOutfit.LEGS_OUTFIT,Assets.RANGER2LEGS_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(legOutfit);\n\t\t\tbodyOutfit = new PlayerOutfit(42*16,49*16,Assets.RANGER2_SHIRT,PlayerOutfit.BODY_OUTFIT,Assets.RANGER2BODY_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(bodyOutfit);\n\t\t\theadOutfit = new PlayerOutfit(72*16,55*16,Assets.RANGER2_HAT,PlayerOutfit.HEAD_OUTFIT,Assets.RANGER2HEAD_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(headOutfit);\n");
+    output.print("\t\t\tlegOutfit = new PlayerOutfit(72*7,55*16,Assets.RANGER2_PANTS,PlayerOutfit.LEGS_OUTFIT,Assets.RANGER2LEGS_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(legOutfit);\n\t\t\tbodyOutfit = new PlayerOutfit(42*16,49*16,Assets.RANGER2_SHIRT,PlayerOutfit.BODY_OUTFIT,Assets.RANGER2BODY_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(bodyOutfit);\n\t\t\theadOutfit = new PlayerOutfit(72*16,55*16,Assets.RANGER2_HAT,PlayerOutfit.HEAD_OUTFIT,Assets.RANGER2HEAD_SPRITE, OutfitHandler.GUARD_OUTFIT);\n\t\t\tadd(headOutfit);\n\t\t\tsetLevelName(\"Dungeon\");\n"+"\t\t\tvar dungeonMusic: FlxSound = new FlxSound;\n\t\t\tdungeonMusic.loadEmbedded(Assets.DUNGEON_SONG,true);\n\t\t\tFlxG.music = (dungeonMusic);\n\t\t\tFlxG.music.volume = 0.6;\n\t\t\tFlxG.music.play();\n");
     output.print("\t\t\t//SAFEZONE\n");
     output.print(safezoneCode);
     output.print("\t\t\t//SAFEZONE\n");
@@ -990,6 +990,7 @@ void saveMap(File fileOut){
     output.print("\t\t\tplayer.addSprites(this);\n");
     output.print("\t\t\tadd(enemyController);\n");
     output.print("\t\t\tadd(foreGroundGroup);\n");
+    output.print("\t\t\tenemyController.addGUIBits(this);\n");
     output.print("\t\t\tadd(playerLight);\n");
     output.print("\t\t\tadd(darkness);\n");
     output.print("\t\t\tadd(guiGroup);\n");
