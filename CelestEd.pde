@@ -1138,7 +1138,7 @@ void loadMap(File fileIn){
         }
         
         if (found != null){
-          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, false, false));
+          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, false, 0));
           //println("yay!");
         }
       }
@@ -1159,8 +1159,32 @@ void loadMap(File fileIn){
         }
         
         if (found != null){
-          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, true, spriteStr.length>4));
+          
+          int numToUse = 0;
+          
+          if(spriteName != "WalrusArmor")
+          {
+            numToUse= 1;
+          }
+          
+          newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, true, numToUse));
           //println("yay!");
+        }
+        else
+        {
+          spriteName = "plant3";
+          
+          Sprite found2 = null;
+          for (Sprite s : spriteList){
+            //println(s.name);
+            if (spriteName.equals(s.name)){
+              found2 = s;
+              //println("found match");
+            }
+          }
+        
+           newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found2, true, 2));
+          
         }
       }
       
@@ -1398,7 +1422,7 @@ void initButtons(){
   toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)", "Switch tool (WATER DROPLETS)", "Switch tool (OBJECTS/SPRITES)","Switch tool (SAVE POINTS)"});
   layerSelector = new Button(0,90,new String[]{"Switch layer (FLOOR)","Switch layer (FOREGROUND)","Switch layer (WALL)"});
   enemyModeSelector = new Button(0,90,new String[]{"Switch mode (CAT GUARD)","Switch mode (RAT COOK)","Switch mode (SHARK LADY)","Switch mode (WAYPOINT)"});
-  hideableModeSelector = new Button(0,90,new String[]{"Switch hide mode (NORMAL)", "Switch hide mode (HIDEABLE)", "Switch hide mode (HIDEABLE w/ TIME LIMIT)"});
+  hideableModeSelector = new Button(0,90,new String[]{"Switch hide mode (NORMAL)", "Switch hide mode (HIDEABLE REG)", "Switch hide mode (HIDEABLE w/ TIME LIMIT)", "Switch hide mode (HIDEABLE PLANT)"});
   
   hideOptions = new Button(0,120, "Hide Options", "Show Options");
   hideOptions.setIndex(1);
@@ -1562,7 +1586,8 @@ void editSprites(){
   if (found == null){
     float gridXf = (camX+0.5) + ((mouseX/float(gridSize)) - (WIN_X*0.5)/gridSize);
     float gridYf = (camY+0.5) + ((mouseY/float(gridSize)) - (WIN_Y*0.5)/gridSize);
-    sprites.add(new Sprite(gridXf, gridYf, spriteDrawer.getSelectedSprite(), hideableModeSelector.getIndex()>0, hideableModeSelector.getIndex()>1));
+
+    sprites.add(new Sprite(gridXf, gridYf, spriteDrawer.getSelectedSprite(), hideableModeSelector.getIndex()>0, hideableModeSelector.getIndex()));
   }
   else {
     sprites.remove(found);

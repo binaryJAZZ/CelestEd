@@ -5,8 +5,12 @@ class Sprite{
   float x, y; //location relative to the grid
   boolean isHideable; //can the player hide inside this sprite object?
   boolean hasHidingTimeLimit = false;
+  int hidingType= 0;
+  public int REGULAR = 0;
+  public int TIMELIMIT = 1;
+  public int BUSH = 2;
   
-  Sprite(float x, float y, String name, PImage img, boolean isHideable, boolean hasHidingTimeLimit){
+  Sprite(float x, float y, String name, PImage img, boolean isHideable, int hidingType){
     this.x = x;
     this.y = y;
     
@@ -16,19 +20,19 @@ class Sprite{
     
     this.isHideable = isHideable;
     
-    this.hasHidingTimeLimit = hasHidingTimeLimit;
+    this.hidingType = hidingType;
   }
   
   Sprite(String name, PImage img){
-    this(0.0, 0.0, name, img, false, false);
+    this(0.0, 0.0, name, img, false, 0);
   }
   
   Sprite(float x, float y, Sprite original){
-    this(x, y, original.name, original.img, false, false);
+    this(x, y, original.name, original.img, false, 0);
   }
   
-  Sprite(float x, float y, Sprite original, boolean isHideable, boolean hasHidingTimeLimit){
-    this(x, y, original.name, original.img, isHideable, hasHidingTimeLimit);
+  Sprite(float x, float y, Sprite original, boolean isHideable, int hidingType){
+    this(x, y, original.name, original.img, isHideable, hidingType);
   }
   
   //render at arbitrary location, with arbitrary size
@@ -71,11 +75,14 @@ class Sprite{
     }
     
     if (isHideable) {
-      if (hasHidingTimeLimit){
-        return indentString + "hideableObjects.push(new HideableObject("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets."+name+",true,0.5));\n";
+      if (hidingType ==TIMELIMIT){
+        return indentString + "hideableObjects.push(new HideableObject("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets.Cauldron,true,0.5, 0.75,Assets.InCauldron));\n";
       }
-      else{
-        return indentString + "hideableObjects.push(new HideableObject("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets."+name+"));\n";
+      else if(hidingType== REGULAR){
+        return indentString + "hideableObjects.push(new HideableObject("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+",Assets.WalrusArmor,false, 0.75,0.75, Assets.WalrusArmorInside));\n";
+      }
+      else{ //if(hidingType== BUSH){
+        return indentString + "hideableObjects.push(new HideablePlant("+(tileSize*(x+tileShiftX))+","+(tileSize*(y+tileShiftY))+"));\n";
       }
     }
     else {
