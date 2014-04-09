@@ -1042,6 +1042,7 @@ void saveMap(File fileOut){
   }
 }
 
+//LOAD THE MAP
 void loadMap(File fileIn){
   try{
     int tileSize = 16; //default is 16
@@ -1115,12 +1116,15 @@ void loadMap(File fileIn){
         newDropletList.add(new WaterDroplet(int(Float.parseFloat(dropletStrX)/tileSize), int(Float.parseFloat(dropletStrY)/tileSize)));
       }
       
+      
       if (curWords.length > 1 && curWords[0].equals("savePoints.push(new")){
         print("savepoint!");
         String savepointStrX = splitTokens(curWords[1], "(")[1].replace(",",""); 
         String savepointStrY = curWords[2].replace("));",""); 
         newSavepointList.add(new SavePoint(int(Float.parseFloat(savepointStrX)/tileSize), int(Float.parseFloat(savepointStrY)/tileSize)));
       }
+      
+      
       
       if (curWords.length > 1 && curWords[0].equals("sprite")){
         //println("found sprite!");
@@ -1143,11 +1147,19 @@ void loadMap(File fileIn){
         }
       }
       
+      
       if (curWords.length > 1 && curWords[0].equals("hideableObjects.push(new")){
-        //println("found hideable!");
+        
+        println("found hideable!");
         String[] spriteStr = splitTokens(curWords[1], "()")[1].split(",");
         
+        
+        if(spriteStr.length>2)
+        {
         String spriteName = spriteStr[2].replace("Assets.", "");
+        
+        //println("SpriteName: "+spriteName);
+        
         //println(spriteName);
         Sprite found = null;
         for (Sprite s : spriteList){
@@ -1170,9 +1182,10 @@ void loadMap(File fileIn){
           newSpriteList.add(new Sprite(Float.parseFloat(spriteStr[0])/tileSize, Float.parseFloat(spriteStr[1])/tileSize, found, true, numToUse));
           //println("yay!");
         }
+        }
         else
         {
-          spriteName = "plant3";
+          String spriteName = "plant3";
           
           Sprite found2 = null;
           for (Sprite s : spriteList){
