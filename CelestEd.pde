@@ -526,7 +526,7 @@ void editRooms(){
 }
 
 void editEnemies(){
-  if (enemyModeSelector.getIndex() < 3){
+  if (enemyModeSelector.getIndex() < 6){
     //add, select, remove enemies
     Enemy existingEnemy = null;
     for (Enemy e : enemyList){
@@ -1121,6 +1121,9 @@ void loadMap(File fileIn){
         print("savepoint!");
         String savepointStrX = splitTokens(curWords[1], "(")[1].replace(",",""); 
         String savepointStrY = curWords[2].replace("));",""); 
+        
+        
+        println("SavePoint loc: "+savepointStrX+", "+savepointStrY);
         newSavepointList.add(new SavePoint(int(Float.parseFloat(savepointStrX)/tileSize), int(Float.parseFloat(savepointStrY)/tileSize)));
       }
       
@@ -1153,12 +1156,16 @@ void loadMap(File fileIn){
         println("found hideable!");
         String[] spriteStr = splitTokens(curWords[1], "()")[1].split(",");
         
+        for(int i =0; i<spriteStr.length; i++)
+        {
+          println("Sprite str "+i+": "+spriteStr[i]);
+        }
         
         if(spriteStr.length>2)
         {
         String spriteName = spriteStr[2].replace("Assets.", "");
-        
-        //println("SpriteName: "+spriteName);
+        println("Two: "+spriteStr[2]);
+        println("SpriteName: "+spriteName);
         
         //println(spriteName);
         Sprite found = null;
@@ -1166,7 +1173,7 @@ void loadMap(File fileIn){
           //println(s.name);
           if (spriteName.equals(s.name)){
             found = s;
-            //println("found match");
+            println("found match");
           }
         }
         
@@ -1174,8 +1181,9 @@ void loadMap(File fileIn){
           
           int numToUse = 0;
           
-          if(spriteName != "WalrusArmor")
+          if(!spriteName.equals("WalrusArmor"))
           {
+            println("Setting to type 1");
             numToUse= 1;
           }
           
@@ -1185,6 +1193,8 @@ void loadMap(File fileIn){
         }
         else
         {
+          println("Got to the else");
+          
           String spriteName = "plant3";
           
           Sprite found2 = null;
@@ -1203,7 +1213,6 @@ void loadMap(File fileIn){
       
       
       if (curWords.length > 4 && curWords[1].contains(":Enemy")){
-        println("hello");
         String et = curWords[4];
         println(et);
         if (et.contains("Enemy(Assets.GUARD_SPRITE")){
@@ -1214,6 +1223,15 @@ void loadMap(File fileIn){
         }
         else if (et.contains("LadyEnemy")){
           curEnemyType = 2;
+        }
+        else if (et.contains("CelesteEnemy")){
+          curEnemyType = 3;
+        }
+        else if (et.contains("WalrusEnemy")){
+          curEnemyType = 4;
+        }
+        else if (et.contains("TrueWalrusEnemy")){
+          curEnemyType = 5;
         }
       }
       
@@ -1434,7 +1452,7 @@ void initButtons(){
   
   toolSelector = new Button(0,75,new String[]{"Switch tool (TILES)","Switch tool (ROOMS)","Switch tool (PLAYER)","Switch tool (ENEMY)", "Switch tool (WATER DROPLETS)", "Switch tool (OBJECTS/SPRITES)","Switch tool (SAVE POINTS)"});
   layerSelector = new Button(0,90,new String[]{"Switch layer (FLOOR)","Switch layer (FOREGROUND)","Switch layer (WALL)"});
-  enemyModeSelector = new Button(0,90,new String[]{"Switch mode (CAT GUARD)","Switch mode (RAT COOK)","Switch mode (SHARK LADY)","Switch mode (WAYPOINT)"});
+  enemyModeSelector = new Button(0,90,new String[]{"Switch mode (CAT GUARD)","Switch mode (RAT COOK)","Switch mode (SHARK LADY)","Switch mode (EVIL DAME)","Switch mode (WALRUS)","Switch mode ( TRUE KING)","Switch mode (WAYPOINT)"});
   hideableModeSelector = new Button(0,90,new String[]{"Switch hide mode (NORMAL)", "Switch hide mode (HIDEABLE REG)", "Switch hide mode (HIDEABLE w/ TIME LIMIT)", "Switch hide mode (HIDEABLE PLANT)"});
   
   hideOptions = new Button(0,120, "Hide Options", "Show Options");
@@ -1600,7 +1618,7 @@ void editSprites(){
     float gridXf = (camX+0.5) + ((mouseX/float(gridSize)) - (WIN_X*0.5)/gridSize);
     float gridYf = (camY+0.5) + ((mouseY/float(gridSize)) - (WIN_Y*0.5)/gridSize);
 
-    sprites.add(new Sprite(gridXf, gridYf, spriteDrawer.getSelectedSprite(), hideableModeSelector.getIndex()>0, hideableModeSelector.getIndex()));
+    sprites.add(new Sprite(gridXf, gridYf, spriteDrawer.getSelectedSprite(), hideableModeSelector.getIndex()>0, hideableModeSelector.getIndex()-1));
   }
   else {
     sprites.remove(found);

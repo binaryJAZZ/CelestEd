@@ -1,7 +1,7 @@
 int enemyCounter = 0;
-String[] enemyTypeNames = {"CAT","RAT","SHARK"};
-String[] enemyConstructors = {"Enemy(Assets.GUARD_SPRITE, ", "CookEnemy(","LadyEnemy("};
-String[] enemyLights = {"enemyLight, ", "enemyLight, ", "enemyLight,enemyLight2, "};
+String[] enemyTypeNames = {"CAT","RAT","SHARK", "DAME", "WALRUS", "W-TRUE"};
+String[] enemyConstructors = {"Enemy(Assets.GUARD_SPRITE, ", "CookEnemy(","LadyEnemy(", "CelesteEnemy(", "WalrusEnemy(", "TrueWalrusEnemy("};
+String[] enemyLights = {"enemyLight, ", "enemyLight, ", "enemyLight,enemyLight2, ", "enemyLight, ", "enemyLight, ", "enemyLight, "};
 
 class Enemy{
   int x, y; //location on the grid
@@ -127,7 +127,7 @@ class Enemy{
     enemyString += "\n";
     
     //NOTE 4
-    if (type < 2){
+    if (type != 2){
       enemyString += indentString + "enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);\n\n";
     }
     else{

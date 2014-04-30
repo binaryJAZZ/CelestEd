@@ -40,6 +40,11 @@ class Sprite{
     image(img, x, y, w, h);
   }
   
+  public PImage getImage()
+  {
+     return img;
+  }
+  
   //render on grid, with texture
   void render(){
     float tileSize = drawer.getCurrentTileSize();
