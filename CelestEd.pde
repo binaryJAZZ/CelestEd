@@ -46,6 +46,7 @@ boolean isDeletingTiles = false;
 
 //sprites
 ArrayList<Sprite> sprites = new ArrayList<Sprite>();
+PImage savePointSprite;
 
 //loading tilesheets and sprites
 String[] supportedFileTypes = {"png", "jpg", "gif"};
@@ -112,6 +113,8 @@ void setup(){
   loadTilesheets(sketchPath + "/tilesheets");
   
   loadSprites(sketchPath + "/sprites");
+  
+  savePointSprite = loadImage(sketchPath + "/savepoints/sprite.png");
   
   drawer = new TileDrawer(0,int(WIN_Y*0.8),WIN_X,int(WIN_Y*0.2), 32, tilesheets);
   
@@ -1124,7 +1127,8 @@ void loadMap(File fileIn){
         
         
         println("SavePoint loc: "+savepointStrX+", "+savepointStrY);
-        newSavepointList.add(new SavePoint(int(Float.parseFloat(savepointStrX)/tileSize), int(Float.parseFloat(savepointStrY)/tileSize)));
+        //newSavepointList.add(new SavePoint(int(Float.parseFloat(savepointStrX)/tileSize), int(Float.parseFloat(savepointStrY)/tileSize)));
+        newSavepointList.add(new SavePoint((Float.parseFloat(savepointStrX)/tileSize), (Float.parseFloat(savepointStrY)/tileSize)));
       }
       
       
@@ -1592,17 +1596,28 @@ void editWaterDroplets(){
 void editSavePoints(){
   SavePoint found = null;
   for (SavePoint s : savepointList) {
-    if (s.x == getGridX() && s.y == getGridY()) {
+    /*if (s.x == getGridX() && s.y == getGridY()) {
+      found = s;
+    }*/
+    if (s.collision(getGridXf(), getGridYf())) {
       found = s;
     }
   }
   
   if (found == null){
-    savepointList.add(new SavePoint(getGridX(), getGridY()));
+    savepointList.add(new SavePoint(getGridXf(), getGridYf()));
   }
   else {
     savepointList.remove(found);
   }
+}
+
+float getGridXf() {
+ return (camX+0.5) + ((mouseX/float(gridSize)) - (WIN_X*0.5)/gridSize);
+}
+
+float getGridYf() {
+  return (camY+0.5) + ((mouseY/float(gridSize)) - (WIN_Y*0.5)/gridSize);
 }
 
 void editSprites(){
