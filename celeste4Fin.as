@@ -492,7 +492,7 @@ package
 			}
 			else
 			{
-				return null;
+				return super.transferLevel();
 			}
 		}
 

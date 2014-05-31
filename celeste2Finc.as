@@ -1,11 +1,11 @@
 /**
- * Initialization code: new celeste2Fin3(new FlxPoint(5216, 3488),new FlxPoint(16, 16));
+ * Initialization code: new celeste2Finc(new FlxPoint(5216, 3488),new FlxPoint(16, 16));
  * tilesize: 16
  */
 package
 {
 	import org.flixel.*;
-	public class celeste2Fin3 extends TopDownLevel
+	public class celeste2Finc extends TopDownLevel
 	{
 		/** 
 		 * FLOORS layer 
@@ -356,7 +356,7 @@ package
 		); 
 
 		protected var decalGroup:FlxGroup;
-		public function celeste2Fin3(levelSize:FlxPoint, blockSize:FlxPoint):void {
+		public function celeste2Finc(levelSize:FlxPoint, blockSize:FlxPoint):void {
 			super(levelSize, blockSize, new FlxPoint(296.0,1560.0));
 			legOutfit = new PlayerOutfit(72*7,55*16,Assets.RANGER2_PANTS,PlayerOutfit.LEGS_OUTFIT,Assets.RANGER2LEGS_SPRITE, OutfitHandler.GUARD_OUTFIT);
 			add(legOutfit);
@@ -467,6 +467,10 @@ package
 			hideableObjects.push(new HideableObject(1334.0,794.0,Assets.Cauldron,true,0.5, 0.75,Assets.InCauldron));
 			hideableObjects.push(new HideableObject(1478.0,794.0,Assets.Cauldron,true,0.5, 0.75,Assets.InCauldron));
 			hideableObjects.push(new HideableObject(1606.0,795.0,Assets.Cauldron,true,0.5, 0.75,Assets.InCauldron));
+			hideableObjects.push(new HideableObject(223.0,1408.0,Assets.Cauldron,true,0.5, 0.75,Assets.InCauldron));
+			hideableObjects.push(new HideableObject(273.0,1393.0,Assets.Cauldron,true,0.5, 0.75,Assets.InCauldron));
+			hideableObjects.push(new HideableObject(320.0,1397.0,Assets.Cauldron,true,0.5, 0.75,Assets.InCauldron));
+			hideableObjects.push(new HideableObject(342.0,1418.0,Assets.Cauldron,true,0.5, 0.75,Assets.InCauldron));
 		}
 
 		override protected function savePointCreation():void{
@@ -546,11 +550,7 @@ package
 			sprite.immovable=true;
 			objectGroup.add(sprite);
 
-			sprite = new FlxSprite(449.0,483.0,Assets.oven);
-			sprite.immovable=true;
-			objectGroup.add(sprite);
-
-			sprite = new FlxSprite(498.0,483.0,Assets.oven);
+			sprite = new FlxSprite(449.0,484.0,Assets.oven);
 			sprite.immovable=true;
 			objectGroup.add(sprite);
 
@@ -558,7 +558,7 @@ package
 			sprite.immovable=true;
 			objectGroup.add(sprite);
 
-			sprite = new FlxSprite(417.0,387.0,Assets.oven);
+			sprite = new FlxSprite(417.0,388.0,Assets.oven);
 			sprite.immovable=true;
 			objectGroup.add(sprite);
 
@@ -2223,377 +2223,377 @@ package
 			var enemy12:Enemy = new CookEnemy(waypointList12, player, enemyLight, 560.0, 1440.0); 
 			enemies.push(enemy12); 
 
-			var waypointList14: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
+			var waypointList13: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList14.push(new FlxPoint(1688.0,824.0)); 
-			waypointList14.push(new FlxPoint(1304.0,824.0)); 
-			waypointList14.push(new FlxPoint(1288.0,840.0)); 
+			waypointList13.push(new FlxPoint(1688.0,824.0)); 
+			waypointList13.push(new FlxPoint(1304.0,824.0)); 
+			waypointList13.push(new FlxPoint(1288.0,840.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy14:Enemy = new CookEnemy(waypointList14, player, enemyLight, 1680.0, 816.0); 
+			var enemy13:Enemy = new CookEnemy(waypointList13, player, enemyLight, 1680.0, 816.0); 
+			enemies.push(enemy13); 
+
+			var waypointList14: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
+
+			waypointList14.push(new FlxPoint(744.0,1016.0)); 
+			waypointList14.push(new FlxPoint(744.0,904.0)); 
+			waypointList14.push(new FlxPoint(568.0,904.0)); 
+			waypointList14.push(new FlxPoint(568.0,920.0)); 
+			waypointList14.push(new FlxPoint(744.0,920.0)); 
+
+			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
+
+			var enemy14:Enemy = new CookEnemy(waypointList14, player, enemyLight, 736.0, 1008.0); 
 			enemies.push(enemy14); 
 
 			var waypointList15: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList15.push(new FlxPoint(744.0,1016.0)); 
-			waypointList15.push(new FlxPoint(744.0,904.0)); 
-			waypointList15.push(new FlxPoint(568.0,904.0)); 
-			waypointList15.push(new FlxPoint(568.0,920.0)); 
-			waypointList15.push(new FlxPoint(744.0,920.0)); 
+			waypointList15.push(new FlxPoint(184.0,1048.0)); 
+			waypointList15.push(new FlxPoint(184.0,712.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy15:Enemy = new CookEnemy(waypointList15, player, enemyLight, 736.0, 1008.0); 
+			var enemy15:Enemy = new CookEnemy(waypointList15, player, enemyLight, 176.0, 1040.0); 
 			enemies.push(enemy15); 
 
 			var waypointList16: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList16.push(new FlxPoint(184.0,1048.0)); 
-			waypointList16.push(new FlxPoint(184.0,712.0)); 
+			waypointList16.push(new FlxPoint(136.0,712.0)); 
+			waypointList16.push(new FlxPoint(136.0,1048.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy16:Enemy = new CookEnemy(waypointList16, player, enemyLight, 176.0, 1040.0); 
+			var enemy16:Enemy = new CookEnemy(waypointList16, player, enemyLight, 128.0, 704.0); 
 			enemies.push(enemy16); 
 
 			var waypointList17: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList17.push(new FlxPoint(136.0,712.0)); 
-			waypointList17.push(new FlxPoint(136.0,1048.0)); 
+			waypointList17.push(new FlxPoint(1656.0,1448.0)); 
+			waypointList17.push(new FlxPoint(1752.0,1448.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy17:Enemy = new CookEnemy(waypointList17, player, enemyLight, 128.0, 704.0); 
+			var enemy17:Enemy = new CookEnemy(waypointList17, player, enemyLight, 1648.0, 1440.0); 
 			enemies.push(enemy17); 
 
 			var waypointList18: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList18.push(new FlxPoint(1656.0,1448.0)); 
-			waypointList18.push(new FlxPoint(1752.0,1448.0)); 
+			waypointList18.push(new FlxPoint(1624.0,1512.0)); 
+			waypointList18.push(new FlxPoint(1800.0,1512.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy18:Enemy = new CookEnemy(waypointList18, player, enemyLight, 1648.0, 1440.0); 
+			var enemy18:Enemy = new CookEnemy(waypointList18, player, enemyLight, 1616.0, 1504.0); 
 			enemies.push(enemy18); 
 
 			var waypointList19: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList19.push(new FlxPoint(1624.0,1512.0)); 
-			waypointList19.push(new FlxPoint(1800.0,1512.0)); 
+			waypointList19.push(new FlxPoint(1784.0,1448.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy19:Enemy = new CookEnemy(waypointList19, player, enemyLight, 1616.0, 1504.0); 
+			var enemy19:Enemy = new CookEnemy(waypointList19, player, enemyLight, 1776.0, 1440.0); 
 			enemies.push(enemy19); 
 
 			var waypointList20: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList20.push(new FlxPoint(1784.0,1448.0)); 
+			waypointList20.push(new FlxPoint(744.0,1288.0)); 
+			waypointList20.push(new FlxPoint(744.0,1448.0)); 
+			waypointList20.push(new FlxPoint(568.0,1448.0)); 
+			waypointList20.push(new FlxPoint(568.0,1288.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy20:Enemy = new CookEnemy(waypointList20, player, enemyLight, 1776.0, 1440.0); 
+			var enemy20:Enemy = new CookEnemy(waypointList20, player, enemyLight, 736.0, 1280.0); 
 			enemies.push(enemy20); 
 
 			var waypointList21: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList21.push(new FlxPoint(744.0,1288.0)); 
-			waypointList21.push(new FlxPoint(744.0,1448.0)); 
-			waypointList21.push(new FlxPoint(568.0,1448.0)); 
-			waypointList21.push(new FlxPoint(568.0,1288.0)); 
+			waypointList21.push(new FlxPoint(1560.0,1400.0)); 
+			waypointList21.push(new FlxPoint(1800.0,1400.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy21:Enemy = new CookEnemy(waypointList21, player, enemyLight, 736.0, 1280.0); 
+			var enemy21:Enemy = new CookEnemy(waypointList21, player, enemyLight, 1552.0, 1392.0); 
 			enemies.push(enemy21); 
 
 			var waypointList22: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList22.push(new FlxPoint(1560.0,1400.0)); 
-			waypointList22.push(new FlxPoint(1800.0,1400.0)); 
+			waypointList22.push(new FlxPoint(984.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1016.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1016.0,1080.0)); 
+			waypointList22.push(new FlxPoint(1032.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1064.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1064.0,1080.0)); 
+			waypointList22.push(new FlxPoint(1080.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1112.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1112.0,1080.0)); 
+			waypointList22.push(new FlxPoint(1128.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1160.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1160.0,1080.0)); 
+			waypointList22.push(new FlxPoint(1176.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1208.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1208.0,1080.0)); 
+			waypointList22.push(new FlxPoint(1224.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1256.0,1064.0)); 
+			waypointList22.push(new FlxPoint(1256.0,1080.0)); 
+			waypointList22.push(new FlxPoint(1272.0,1064.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy22:Enemy = new CookEnemy(waypointList22, player, enemyLight, 1552.0, 1392.0); 
+			var enemy22:Enemy = new CookEnemy(waypointList22, player, enemyLight, 976.0, 1056.0); 
 			enemies.push(enemy22); 
 
 			var waypointList23: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList23.push(new FlxPoint(984.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1016.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1016.0,1080.0)); 
-			waypointList23.push(new FlxPoint(1032.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1064.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1064.0,1080.0)); 
-			waypointList23.push(new FlxPoint(1080.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1112.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1112.0,1080.0)); 
-			waypointList23.push(new FlxPoint(1128.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1160.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1160.0,1080.0)); 
-			waypointList23.push(new FlxPoint(1176.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1208.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1208.0,1080.0)); 
-			waypointList23.push(new FlxPoint(1224.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1256.0,1064.0)); 
-			waypointList23.push(new FlxPoint(1256.0,1080.0)); 
-			waypointList23.push(new FlxPoint(1272.0,1064.0)); 
+			waypointList23.push(new FlxPoint(968.0,1032.0)); 
+			waypointList23.push(new FlxPoint(728.0,1032.0)); 
+			waypointList23.push(new FlxPoint(728.0,968.0)); 
+			waypointList23.push(new FlxPoint(728.0,952.0)); 
+			waypointList23.push(new FlxPoint(728.0,1048.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy23:Enemy = new CookEnemy(waypointList23, player, enemyLight, 976.0, 1056.0); 
+			var enemy23:Enemy = new CookEnemy(waypointList23, player, enemyLight, 960.0, 1024.0); 
 			enemies.push(enemy23); 
 
 			var waypointList24: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList24.push(new FlxPoint(968.0,1032.0)); 
-			waypointList24.push(new FlxPoint(728.0,1032.0)); 
-			waypointList24.push(new FlxPoint(728.0,968.0)); 
-			waypointList24.push(new FlxPoint(728.0,952.0)); 
-			waypointList24.push(new FlxPoint(728.0,1048.0)); 
+			waypointList24.push(new FlxPoint(648.0,520.0)); 
+			waypointList24.push(new FlxPoint(648.0,264.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy24:Enemy = new CookEnemy(waypointList24, player, enemyLight, 960.0, 1024.0); 
+			var enemy24:Enemy = new CookEnemy(waypointList24, player, enemyLight, 640.0, 512.0); 
 			enemies.push(enemy24); 
 
 			var waypointList25: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList25.push(new FlxPoint(648.0,520.0)); 
-			waypointList25.push(new FlxPoint(648.0,264.0)); 
+			waypointList25.push(new FlxPoint(696.0,264.0)); 
+			waypointList25.push(new FlxPoint(696.0,520.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy25:Enemy = new CookEnemy(waypointList25, player, enemyLight, 640.0, 512.0); 
+			var enemy25:Enemy = new CookEnemy(waypointList25, player, enemyLight, 688.0, 256.0); 
 			enemies.push(enemy25); 
 
 			var waypointList26: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList26.push(new FlxPoint(696.0,264.0)); 
-			waypointList26.push(new FlxPoint(696.0,520.0)); 
+			waypointList26.push(new FlxPoint(1496.0,632.0)); 
+			waypointList26.push(new FlxPoint(1688.0,632.0)); 
+			waypointList26.push(new FlxPoint(1512.0,632.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy26:Enemy = new CookEnemy(waypointList26, player, enemyLight, 688.0, 256.0); 
+			var enemy26:Enemy = new CookEnemy(waypointList26, player, enemyLight, 1488.0, 624.0); 
 			enemies.push(enemy26); 
 
 			var waypointList27: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList27.push(new FlxPoint(1496.0,632.0)); 
-			waypointList27.push(new FlxPoint(1688.0,632.0)); 
-			waypointList27.push(new FlxPoint(1512.0,632.0)); 
+			waypointList27.push(new FlxPoint(1400.0,632.0)); 
+			waypointList27.push(new FlxPoint(1400.0,680.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy27:Enemy = new CookEnemy(waypointList27, player, enemyLight, 1488.0, 624.0); 
+			var enemy27:Enemy = new CookEnemy(waypointList27, player, enemyLight, 1392.0, 624.0); 
 			enemies.push(enemy27); 
 
 			var waypointList28: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList28.push(new FlxPoint(1400.0,632.0)); 
-			waypointList28.push(new FlxPoint(1400.0,680.0)); 
+			waypointList28.push(new FlxPoint(1016.0,952.0)); 
+			waypointList28.push(new FlxPoint(1016.0,1048.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy28:Enemy = new CookEnemy(waypointList28, player, enemyLight, 1392.0, 624.0); 
+			var enemy28:Enemy = new CookEnemy(waypointList28, player, enemyLight, 1008.0, 944.0); 
 			enemies.push(enemy28); 
 
 			var waypointList29: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList29.push(new FlxPoint(1016.0,952.0)); 
-			waypointList29.push(new FlxPoint(1016.0,1048.0)); 
+			waypointList29.push(new FlxPoint(1064.0,952.0)); 
+			waypointList29.push(new FlxPoint(1064.0,1048.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy29:Enemy = new CookEnemy(waypointList29, player, enemyLight, 1008.0, 944.0); 
+			var enemy29:Enemy = new CookEnemy(waypointList29, player, enemyLight, 1056.0, 944.0); 
 			enemies.push(enemy29); 
 
 			var waypointList30: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList30.push(new FlxPoint(1064.0,952.0)); 
-			waypointList30.push(new FlxPoint(1064.0,1048.0)); 
+			waypointList30.push(new FlxPoint(1112.0,936.0)); 
+			waypointList30.push(new FlxPoint(1112.0,1048.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy30:Enemy = new CookEnemy(waypointList30, player, enemyLight, 1056.0, 944.0); 
+			var enemy30:Enemy = new CookEnemy(waypointList30, player, enemyLight, 1104.0, 928.0); 
 			enemies.push(enemy30); 
 
 			var waypointList31: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList31.push(new FlxPoint(1112.0,936.0)); 
-			waypointList31.push(new FlxPoint(1112.0,1048.0)); 
+			waypointList31.push(new FlxPoint(1160.0,936.0)); 
+			waypointList31.push(new FlxPoint(1160.0,1048.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy31:Enemy = new CookEnemy(waypointList31, player, enemyLight, 1104.0, 928.0); 
+			var enemy31:Enemy = new CookEnemy(waypointList31, player, enemyLight, 1152.0, 928.0); 
 			enemies.push(enemy31); 
 
 			var waypointList32: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList32.push(new FlxPoint(1160.0,936.0)); 
-			waypointList32.push(new FlxPoint(1160.0,1048.0)); 
+			waypointList32.push(new FlxPoint(120.0,392.0)); 
+			waypointList32.push(new FlxPoint(104.0,392.0)); 
+			waypointList32.push(new FlxPoint(104.0,264.0)); 
+			waypointList32.push(new FlxPoint(120.0,264.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy32:Enemy = new CookEnemy(waypointList32, player, enemyLight, 1152.0, 928.0); 
+			var enemy32:Enemy = new CookEnemy(waypointList32, player, enemyLight, 112.0, 384.0); 
 			enemies.push(enemy32); 
 
 			var waypointList33: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList33.push(new FlxPoint(120.0,392.0)); 
-			waypointList33.push(new FlxPoint(104.0,392.0)); 
-			waypointList33.push(new FlxPoint(104.0,264.0)); 
-			waypointList33.push(new FlxPoint(120.0,264.0)); 
+			waypointList33.push(new FlxPoint(904.0,456.0)); 
+			waypointList33.push(new FlxPoint(1144.0,456.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy33:Enemy = new CookEnemy(waypointList33, player, enemyLight, 112.0, 384.0); 
+			var enemy33:Enemy = new CookEnemy(waypointList33, player, enemyLight, 896.0, 448.0); 
 			enemies.push(enemy33); 
 
 			var waypointList34: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList34.push(new FlxPoint(904.0,456.0)); 
-			waypointList34.push(new FlxPoint(1144.0,456.0)); 
+			waypointList34.push(new FlxPoint(904.0,408.0)); 
+			waypointList34.push(new FlxPoint(1000.0,408.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy34:Enemy = new CookEnemy(waypointList34, player, enemyLight, 896.0, 448.0); 
+			var enemy34:Enemy = new CookEnemy(waypointList34, player, enemyLight, 896.0, 400.0); 
 			enemies.push(enemy34); 
 
 			var waypointList35: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList35.push(new FlxPoint(904.0,408.0)); 
-			waypointList35.push(new FlxPoint(1000.0,408.0)); 
+			waypointList35.push(new FlxPoint(1144.0,408.0)); 
+			waypointList35.push(new FlxPoint(1048.0,408.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy35:Enemy = new CookEnemy(waypointList35, player, enemyLight, 896.0, 400.0); 
+			var enemy35:Enemy = new CookEnemy(waypointList35, player, enemyLight, 1136.0, 400.0); 
 			enemies.push(enemy35); 
 
 			var waypointList36: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList36.push(new FlxPoint(1144.0,408.0)); 
-			waypointList36.push(new FlxPoint(1048.0,408.0)); 
+			waypointList36.push(new FlxPoint(904.0,360.0)); 
+			waypointList36.push(new FlxPoint(1144.0,360.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy36:Enemy = new CookEnemy(waypointList36, player, enemyLight, 1136.0, 400.0); 
+			var enemy36:Enemy = new CookEnemy(waypointList36, player, enemyLight, 896.0, 352.0); 
 			enemies.push(enemy36); 
 
 			var waypointList37: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList37.push(new FlxPoint(904.0,360.0)); 
-			waypointList37.push(new FlxPoint(1144.0,360.0)); 
+			waypointList37.push(new FlxPoint(904.0,312.0)); 
+			waypointList37.push(new FlxPoint(1144.0,312.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy37:Enemy = new CookEnemy(waypointList37, player, enemyLight, 896.0, 352.0); 
+			var enemy37:Enemy = new CookEnemy(waypointList37, player, enemyLight, 896.0, 304.0); 
 			enemies.push(enemy37); 
 
 			var waypointList38: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList38.push(new FlxPoint(904.0,312.0)); 
-			waypointList38.push(new FlxPoint(1144.0,312.0)); 
+			waypointList38.push(new FlxPoint(1096.0,392.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy38:Enemy = new CookEnemy(waypointList38, player, enemyLight, 896.0, 304.0); 
+			var enemy38:Enemy = new CookEnemy(waypointList38, player, enemyLight, 1088.0, 384.0); 
 			enemies.push(enemy38); 
 
 			var waypointList39: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList39.push(new FlxPoint(1096.0,392.0)); 
+			waypointList39.push(new FlxPoint(952.0,392.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy39:Enemy = new CookEnemy(waypointList39, player, enemyLight, 1088.0, 384.0); 
+			var enemy39:Enemy = new CookEnemy(waypointList39, player, enemyLight, 944.0, 384.0); 
 			enemies.push(enemy39); 
 
 			var waypointList40: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList40.push(new FlxPoint(952.0,392.0)); 
+			waypointList40.push(new FlxPoint(1032.0,440.0)); 
+			waypointList40.push(new FlxPoint(1032.0,360.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy40:Enemy = new CookEnemy(waypointList40, player, enemyLight, 944.0, 384.0); 
+			var enemy40:Enemy = new CookEnemy(waypointList40, player, enemyLight, 1024.0, 432.0); 
 			enemies.push(enemy40); 
 
 			var waypointList41: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList41.push(new FlxPoint(1032.0,440.0)); 
-			waypointList41.push(new FlxPoint(1032.0,360.0)); 
+			waypointList41.push(new FlxPoint(1144.0,440.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy41:Enemy = new CookEnemy(waypointList41, player, enemyLight, 1024.0, 432.0); 
+			var enemy41:Enemy = new CookEnemy(waypointList41, player, enemyLight, 1136.0, 432.0); 
 			enemies.push(enemy41); 
 
 			var waypointList42: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList42.push(new FlxPoint(1144.0,440.0)); 
+			waypointList42.push(new FlxPoint(1736.0,456.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy42:Enemy = new CookEnemy(waypointList42, player, enemyLight, 1136.0, 432.0); 
+			var enemy42:Enemy = new CookEnemy(waypointList42, player, enemyLight, 1728.0, 448.0); 
 			enemies.push(enemy42); 
 
 			var waypointList43: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList43.push(new FlxPoint(1736.0,456.0)); 
+			waypointList43.push(new FlxPoint(1768.0,456.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy43:Enemy = new CookEnemy(waypointList43, player, enemyLight, 1728.0, 448.0); 
+			var enemy43:Enemy = new CookEnemy(waypointList43, player, enemyLight, 1760.0, 448.0); 
 			enemies.push(enemy43); 
 
 			var waypointList44: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList44.push(new FlxPoint(1768.0,456.0)); 
+			waypointList44.push(new FlxPoint(1800.0,456.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy44:Enemy = new CookEnemy(waypointList44, player, enemyLight, 1760.0, 448.0); 
+			var enemy44:Enemy = new CookEnemy(waypointList44, player, enemyLight, 1792.0, 448.0); 
 			enemies.push(enemy44); 
 
 			var waypointList45: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList45.push(new FlxPoint(1800.0,456.0)); 
+			waypointList45.push(new FlxPoint(1832.0,456.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy45:Enemy = new CookEnemy(waypointList45, player, enemyLight, 1792.0, 448.0); 
+			var enemy45:Enemy = new CookEnemy(waypointList45, player, enemyLight, 1824.0, 448.0); 
 			enemies.push(enemy45); 
 
 			var waypointList46: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList46.push(new FlxPoint(1832.0,456.0)); 
+			waypointList46.push(new FlxPoint(1864.0,456.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy46:Enemy = new CookEnemy(waypointList46, player, enemyLight, 1824.0, 448.0); 
+			var enemy46:Enemy = new CookEnemy(waypointList46, player, enemyLight, 1856.0, 448.0); 
 			enemies.push(enemy46); 
 
 			var waypointList47: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
 
-			waypointList47.push(new FlxPoint(1864.0,456.0)); 
+			waypointList47.push(new FlxPoint(952.0,1432.0)); 
+			waypointList47.push(new FlxPoint(1048.0,1432.0)); 
+			waypointList47.push(new FlxPoint(1032.0,1480.0)); 
+			waypointList47.push(new FlxPoint(968.0,1464.0)); 
 
 			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
 
-			var enemy47:Enemy = new CookEnemy(waypointList47, player, enemyLight, 1856.0, 448.0); 
+			var enemy47:Enemy = new CookEnemy(waypointList47, player, enemyLight, 944.0, 1424.0); 
 			enemies.push(enemy47); 
-
-			var waypointList48: Vector.<FlxPoint> = new Vector.<FlxPoint>(); 
-
-			waypointList48.push(new FlxPoint(952.0,1432.0)); 
-			waypointList48.push(new FlxPoint(1048.0,1432.0)); 
-			waypointList48.push(new FlxPoint(1032.0,1480.0)); 
-			waypointList48.push(new FlxPoint(968.0,1464.0)); 
-
-			enemyLight = new Light(Assets.LightImageClass, FlxG.width*3/ 4, FlxG.height/ 4, darkness, 0xFFFFFFFF); add(enemyLight); enemyLight.scale=new FlxPoint(0.75,0.75);
-
-			var enemy48:Enemy = new CookEnemy(waypointList48, player, enemyLight, 944.0, 1424.0); 
-			enemies.push(enemy48); 
 
 			enemyController = new EnemyController(enemies);
 		}
@@ -2644,7 +2644,7 @@ package
 		override public function transferLevel(): TopDownLevel{
 			if(super.reloadThisLevel)
 			{
-				return new celeste2Fin3(new FlxPoint(5216, 3488),new FlxPoint(16, 16));
+				return new celeste2Finc(new FlxPoint(5216, 3488),new FlxPoint(16, 16));
 			}
 			else
 			{

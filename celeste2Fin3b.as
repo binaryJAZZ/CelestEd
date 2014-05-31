@@ -1,11 +1,11 @@
 /**
- * Initialization code: new celeste2Fin3(new FlxPoint(5216, 3488),new FlxPoint(16, 16));
+ * Initialization code: new celeste2Fin3b(new FlxPoint(5216, 3488),new FlxPoint(16, 16));
  * tilesize: 16
  */
 package
 {
 	import org.flixel.*;
-	public class celeste2Fin3 extends TopDownLevel
+	public class celeste2Fin3b extends TopDownLevel
 	{
 		/** 
 		 * FLOORS layer 
@@ -356,7 +356,7 @@ package
 		); 
 
 		protected var decalGroup:FlxGroup;
-		public function celeste2Fin3(levelSize:FlxPoint, blockSize:FlxPoint):void {
+		public function celeste2Fin3b(levelSize:FlxPoint, blockSize:FlxPoint):void {
 			super(levelSize, blockSize, new FlxPoint(296.0,1560.0));
 			legOutfit = new PlayerOutfit(72*7,55*16,Assets.RANGER2_PANTS,PlayerOutfit.LEGS_OUTFIT,Assets.RANGER2LEGS_SPRITE, OutfitHandler.GUARD_OUTFIT);
 			add(legOutfit);
@@ -546,19 +546,17 @@ package
 			sprite.immovable=true;
 			objectGroup.add(sprite);
 
-			sprite = new FlxSprite(449.0,483.0,Assets.oven);
+			sprite = new FlxSprite(449.0,484.0,Assets.oven);
 			sprite.immovable=true;
 			objectGroup.add(sprite);
 
-			sprite = new FlxSprite(498.0,483.0,Assets.oven);
-			sprite.immovable=true;
-			objectGroup.add(sprite);
+			
 
 			sprite = new FlxSprite(288.0,388.0,Assets.oven);
 			sprite.immovable=true;
 			objectGroup.add(sprite);
 
-			sprite = new FlxSprite(417.0,387.0,Assets.oven);
+			sprite = new FlxSprite(417.0,388.0,Assets.oven);
 			sprite.immovable=true;
 			objectGroup.add(sprite);
 
@@ -2644,7 +2642,7 @@ package
 		override public function transferLevel(): TopDownLevel{
 			if(super.reloadThisLevel)
 			{
-				return new celeste2Fin3(new FlxPoint(5216, 3488),new FlxPoint(16, 16));
+				return new celeste2Fin3b(new FlxPoint(5216, 3488),new FlxPoint(16, 16));
 			}
 			else
 			{
